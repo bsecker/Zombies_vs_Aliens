@@ -63,10 +63,8 @@ class Entity(Base_Entity):
 	"""
 	Entity Base Class. For Zombies, player, etc
 	"""
-	def __init__(self, world, name):
+	def __init__(self):
 		Base_Entity.__init__(self)
-		self.world = world
-		self.name = name
 
 		self.max_gravity = 20
 		self.jump_speed = 10
@@ -74,17 +72,83 @@ class Entity(Base_Entity):
 		self.move_speed = 7
 		self.alive = True
 
+		self.x_vel = 0 
+		self.y_vel = 0
+
 		self.width = 20
 		self.height = 60
-		self.image = pygame.Surface([width, height])
+		self.image = pygame.Surface([self.width, self.height])
 		self.image.fill(RED)
 		self.rect = self.image.get_rect()
 
+		self.level = None
+
 	def update(self):
-		pass
+		self.calc_gravity()
+
+		# Move left/right
+		self.rect.x += self.x_vel
+		#collide with objects
+		block_hit_list = pygame.sprite.spritecollide(self, self.level.block_list, False)
+		for block in block_hit_list:
+			if self.x_vel > 0:
+				self.rect.right = block.rect.left
+			elif self.x_vel < 0:
+				self.rect.left = block.rect.right
+
+		#move up/down
+		self.rect.y += self.y_vel
+		# collide with objects
+		block_hit_list = pygame.sprite.spritecollide(self, self.level.block_list, False)
+		for block in block_hit_list:
+			# Reset our position based on the top/bottom of the object.
+			if self.y_vel > 0:
+				self.rect.bottom = block.rect.top
+			elif self.y_vel < 0:
+				self.rect.top = block.rect.bottom
+ 
+			# Stop our vertical movement
+			self.y_vel = 0
+
 
 	def calc_gravity(self):
-		pass
+		""" Calculate effect of gravity. """
+		if self.y_vel == 0:
+			self.y_vel = 1
+		else:
+			self.y_vel += .35
+ 
+		# See if we are on the ground.
+		if self.rect.y >= SCREEN_HEIGHT - self.rect.height and self.y_vel >= 0:
+			self.y_vel = 0
+			self.rect.y = SCREEN_HEIGHT - self.rect.height
+
+	def jump(self):
+		""" Called when user hits 'jump' button. """
+ 
+		# move down a bit and see if there is a platform below us.
+		# Move down 2 pixels because it doesn't work well if we only move down
+		# 1 when working with a platform moving down.
+		self.rect.y += 2
+		block_hit_list = pygame.sprite.spritecollide(self, self.level.block_list, False)
+		self.rect.y -= 2
+ 
+		# If it is ok to jump, set our speed upwards
+		if len(block_hit_list) > 0 or self.rect.bottom >= SCREEN_HEIGHT:
+			self.y_vel = -self.jump_speed
+
+	# Player-controlled movement:
+	def go_left(self):
+		""" Called when the user hits the left arrow. """
+		self.x_vel = -self.move_speed
+ 
+	def go_right(self):
+		""" Called when the user hits the right arrow. """
+		self.x_vel = self.move_speed
+ 
+	def stop(self):
+		""" Called when the user lets off the keyboard. """
+		self.x_vel = 0
 
 class Zombie(Entity):
 	def __init__(self):
@@ -92,11 +156,16 @@ class Zombie(Entity):
 
 class Player(Entity):
 	def __init__(self):
-		pass
+		Entity.__init__(self)
 
 class Block(Base_Entity):
-	def __init__(self):
-		pass
+	def __init__(self, width, height):
+		Base_Entity.__init__(self)
+		
+		self.image = pygame.Surface([width, height])
+		self.image.fill(GREEN)
+ 
+		self.rect = self.image.get_rect()
 
 class Level:
 	"""Generic superclass used to define a level. Child classes have specific level info."""
@@ -123,7 +192,7 @@ class Level:
 	def remove_entity(self, entity):
 		del self.entities[entity.id]
 
-	def update_entities(self):
+	def update(self):
 		self.block_list.update()
 		self.enemy_list.update()
 
@@ -172,10 +241,10 @@ class Level_01(Level):
 				 ]
 
 		# Go through the array above and add blocks
-		for block in level:
-			block = Block(block[0], block[1])
-			block.rect.x = block[2]
-			block.rect.y = block[3]
+		for _block in level:
+			block = Block(_block[0], _block[1])
+			block.rect.x = _block[2]
+			block.rect.y = _block[3]
 			block.player = self.player
 			self.block_list.add(block)
 
@@ -187,7 +256,7 @@ def main():
 	pygame.init()
 
 	screen_size = (SCREEN_WIDTH,SCREEN_HEIGHT)
-	screen = pygame.display.set_mode(size)
+	screen = pygame.display.set_mode(screen_size)
 
 	pygame.display.set_caption("Sivali Simulator") #######CHANGE THIS
 	
@@ -200,10 +269,8 @@ def main():
 
 	#hardcode curent level 
 	current_level = level_list[0]
-
 	active_sprite_list = pygame.sprite.Group()
 	player.level = current_level
- 
 	player.rect.x = 340
 	player.rect.y = SCREEN_HEIGHT - player.rect.height
 	active_sprite_list.add(player)
@@ -224,9 +291,9 @@ def main():
 					player.jump()
  
 			if event.type == pygame.KEYUP:
-				if event.key == pygame.K_LEFT and player.change_x < 0:
+				if event.key == pygame.K_LEFT and player.x_vel < 0:
 					player.stop()
-				if event.key == pygame.K_RIGHT and player.change_x > 0:
+				if event.key == pygame.K_RIGHT and player.x_vel > 0:
 					player.stop()
 
 		#update level
@@ -235,20 +302,20 @@ def main():
 
 		# Shift the world if the player is near the boundary
 		if player.rect.right >= 500:
-            diff = player.rect.right - 500
-            player.rect.right = 500
-            current_level.shift_world(-diff)
+			diff = player.rect.right - 500
+			player.rect.right = 500
+			current_level.shift_world(-diff)
  
-        # If the player gets near the left side, shift the world right (+x)
-        if player.rect.left <= 120:
-            diff = 120 - player.rect.left
-            player.rect.left = 120
-            current_level.shift_world(diff)
+		# If the player gets near the left side, shift the world right (+x)
+		if player.rect.left <= 120:
+			diff = 120 - player.rect.left
+			player.rect.left = 120
+			current_level.shift_world(diff)
 
 
 		# Draw
 		current_level.render(screen)
-		active_sprite_list.render(screen)
+		active_sprite_list.draw(screen)
 
 		FPSCLOCK.tick(FPS)
 
