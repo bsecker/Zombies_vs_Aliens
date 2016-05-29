@@ -1,6 +1,7 @@
 import pygame
-import constants
+from constants import *
 import blocks
+import entities
 
 class Level:
 	"""Generic superclass used to define a level. Child classes have specific level info."""
@@ -39,7 +40,7 @@ class Level:
 
 	def render(self, surface):
 		"""draw the background and all the entities"""
-		surface.blit(self.background, (0,0))
+		surface.blit(self.background, (self.world_shift // 3,0))
 		
 		#draw all sprite lists
 		self.block_list.draw(surface)
@@ -58,7 +59,7 @@ class Level:
 
 	def add_zombie(self, x, y):
 		#add zombie:
-		zombie = Zombie()
+		zombie = entities.Zombie()
 		zombie.rect.x = x
 		zombie.rect.y = y # 
 		zombie.level = self
@@ -73,18 +74,34 @@ class Level_01(Level):
 		Level.__init__(self, player)
 
 		self.level_limit = -700
+		self.background = pygame.image.load("background_01.png").convert()
+		self.background.set_colorkey(WHITE)
+
 
 		# Array with width, height, x, and y of blocks
-		level = [[210, 70, 500, 500],
-				 [210, 70, 800, 400],
-				 [210, 70, 1000, 500],
-				 [210, 70, 1120, 280],
-				 ]
+		level = [ [blocks.GRASS_LEFT, 500, 500],
+				  [blocks.GRASS_MIDDLE, 570, 500],
+				  [blocks.GRASS_RIGHT, 640, 500],
+				  [blocks.GRASS_LEFT, 800, 400],
+				  [blocks.GRASS_MIDDLE, 870, 400],
+				  [blocks.GRASS_RIGHT, 940, 400],
+				  [blocks.GRASS_LEFT, 1000, 500],
+				  [blocks.GRASS_MIDDLE, 1070, 500],
+				  [blocks.GRASS_RIGHT, 1140, 500],
+				  [blocks.STONE_PLATFORM_LEFT, 1120, 280],
+				  [blocks.STONE_PLATFORM_MIDDLE, 1190, 280],
+				  [blocks.STONE_PLATFORM_RIGHT, 1260, 280],
+				  ]
  
 		# Go through the array above and add blocks
 		for _block in level:
-			block = Block(_block[0], _block[1])
-			block.rect.x = _block[2]
-			block.rect.y = _block[3]
+			block = blocks.Block(_block[0])
+			block.rect.x = _block[1]
+			block.rect.y = _block[2]
 			block.player = self.player
 			self.block_list.add(block)
+
+	def spawn_zombies(self):
+		"""Handles waves and zombie spawning"""
+		zombie = self.add_zombie(230, SCREEN_HEIGHT - self.player.rect.height - 50, self.player)
+		active_sprite_list.add(zombie)

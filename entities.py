@@ -1,4 +1,5 @@
-import pygame, constants
+import pygame
+from constants import *
 
 from spritesheet_functions import SpriteSheet
 
@@ -15,16 +16,16 @@ class Entity(Base_Entity):
 		Base_Entity.__init__(self)
 
 		self.max_gravity = 20
-		self.jump_speed = 10
-		self.gravity_accel = 0.5
-		self.move_speed = 7
+		self.jump_speed = 8
+		self.gravity_accel = .30
+		self.move_speed = 4
 		self.alive = True
 
 		self.x_vel = 0 
 		self.y_vel = 0
 		self.direction = 'L'
 
-		
+
 
 		self.width = 20
 		self.height = 60
@@ -67,7 +68,7 @@ class Entity(Base_Entity):
 		if self.y_vel == 0:
 			self.y_vel = 1
 		else:
-			self.y_vel += .35
+			self.y_vel += self.gravity_accel
  
 		# See if we are on the ground.
 		if self.rect.y >= SCREEN_HEIGHT - self.rect.height and self.y_vel >= 0:
@@ -102,9 +103,10 @@ class Entity(Base_Entity):
 		self.x_vel = 0
 
 class Zombie(Entity):
-	def __init__(self):
+	def __init__(self, player):
 		Entity.__init__(self)
 		self.move_speed = 1
+		self.player = player
 
 	def update(self):
 		Entity.update(self)
@@ -113,12 +115,3 @@ class Zombie(Entity):
 class Player(Entity):
 	def __init__(self):
 		Entity.__init__(self)
-
-class Block(Base_Entity):
-	def __init__(self, width, height):
-		Base_Entity.__init__(self)
-		
-		self.image = pygame.Surface([width, height])
-		self.image.fill(GREEN)
- 
-		self.rect = self.image.get_rect()

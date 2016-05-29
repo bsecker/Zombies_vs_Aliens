@@ -1,5 +1,5 @@
 """Global Constants"""
-import sys
+import sys, pygame
 from pygame.locals import *
 
 # Init Colours
@@ -23,7 +23,7 @@ FPS = 60
 # Screen Variables
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
-boundary = 350
+boundary = 250
 
 right_boundary = SCREEN_WIDTH - boundary
 left_boundary = boundary

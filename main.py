@@ -2,9 +2,13 @@ import pygame
 from pygame.locals import *
 from constants import *
 import levels
+import blocks
+import entities
+
 
 
 def main():
+	global active_sprite_list
 	pygame.init()
 
 	screen_size = (SCREEN_WIDTH,SCREEN_HEIGHT)
@@ -13,7 +17,7 @@ def main():
 	pygame.display.set_caption(WIN_CAPTION)
 	
 	# create player
-	player = Player()
+	player = entities.Player()
 
 	# Create all levels
 	level_list = []
@@ -28,9 +32,6 @@ def main():
 	player.rect.y = SCREEN_HEIGHT - player.rect.height
 	active_sprite_list.add(player)
 
-	zombie = current_level.add_zombie(230, SCREEN_HEIGHT - player.rect.height - 50)
-	active_sprite_list.add(zombie)
-
 	FPSCLOCK = pygame.time.Clock()
 
 	while True:
@@ -39,19 +40,19 @@ def main():
 				terminate()
 
 			if event.type == pygame.KEYDOWN:
-				if event.key == pygame.K_LEFT:
+				if event.key == pygame.K_a:
 					player.go_left()
-				if event.key == pygame.K_RIGHT:
+				if event.key == pygame.K_d:
 					player.go_right()
-				if event.key == pygame.K_UP:
+				if event.key == pygame.K_w:
 					player.jump()
 				if event.key == pygame.K_ESCAPE:
 					terminate()
  
 			if event.type == pygame.KEYUP:
-				if event.key == pygame.K_LEFT and player.x_vel < 0:
+				if event.key == pygame.K_a and player.x_vel < 0:
 					player.stop()
-				if event.key == pygame.K_RIGHT and player.x_vel > 0:
+				if event.key == pygame.K_d and player.x_vel > 0:
 					player.stop()
 
 		#update level
