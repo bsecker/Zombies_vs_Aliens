@@ -2,11 +2,6 @@
 DTG 300 Zombie Survival Game
 
 
-TO DO:
-- Remove global variable
-
-
-
 Side Scroller 
 ideas:
 - Mike Sivali - main character
