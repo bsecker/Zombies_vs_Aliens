@@ -20,6 +20,7 @@ ideas:
 	- Pistol
 	- Megaphone
 - Snack Shack - armoury
+	- snackshack popup store
 - intercom
 rooms:
 	- outside the office
