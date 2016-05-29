@@ -60,7 +60,6 @@ def main():
 		current_level.update()
  
 		current_position = player.rect.x + current_level.world_shift
-		print current_position, current_level.level_limit
 
 		# Shift the world if the player is near the boundary
 		if player.rect.right >= right_boundary:
