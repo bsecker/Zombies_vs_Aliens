@@ -25,7 +25,7 @@ def main():
     current_level = level_list[0]
 
     player.level = current_level
-    player.rect.x = 340
+    player.rect.x = 0
     player.rect.y = constants.SCREEN_HEIGHT - player.rect.height*2
 
     current_level.active_sprite_list.add(player)
@@ -66,18 +66,20 @@ def main():
  
         current_position = player.rect.x + current_level.world_shift
 
-
         # Shift the world if the player is near the boundary
         if player.rect.right >= constants.right_boundary:
             diff = player.rect.right - constants.right_boundary
             player.rect.right = constants.right_boundary
-            current_level.shift_world(-diff)
+            if current_position >= current_level.level_limit:
+                current_level.shift_world(-diff)
 
         # If the player gets near the left side, shift the world right (+x)
         if player.rect.left <= constants.left_boundary:
             diff = constants.left_boundary - player.rect.left
             player.rect.left = constants.left_boundary
-            current_level.shift_world(diff)
+            if current_position <= -current_level.level_limit:
+                current_level.shift_world(diff)     
+
 
         # Draw
         current_level.render(screen)
