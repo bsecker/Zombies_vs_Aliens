@@ -109,9 +109,69 @@ class Zombie(Entity):
 		self.player = player
 
 	def update(self):
+		"""
+		'Brains' for the zombies go here
+		"""
 		Entity.update(self)
-		self.go_right()
+
+		# Head towards player
+		if self.rect.x <= self.player.rect.x:
+			self.go_right()
+		else:
+			self.go_left()
+
+		# Jump if colliding with an object (REWRITE THIS IN FEWER LINES)
+		# move to the right a bit and check collisions then back
+		self.rect.x += 2
+		block_hit_list = pygame.sprite.spritecollide(self, self.level.block_list, False)
+		self.rect.x +=- 2
+		if len(block_hit_list) > 0:
+			self.jump()
+		self.rect.x +=- 2
+
+		#check left
+		block_hit_list = pygame.sprite.spritecollide(self, self.level.block_list, False)
+		self.rect.x += 2
+		if len(block_hit_list) > 0:
+			self.jump()
 
 class Player(Entity):
 	def __init__(self):
 		Entity.__init__(self)
+		self.ammo = 100
+		self.health = 100
+
+	def fire(self):
+		""" attack with current weapon 
+		TEMPORARY"""
+		bullet = Bullet()
+		bullet.rect.x = self.rect.x
+		bullet.rect.y = self.rect.y
+		return bullet
+
+
+class Bullet:
+	"""
+	TO DO: for now, just spawn bullets - in future handle bullet creation by weapon classes
+	"""
+	def __init__(self):
+		self.move_speed = 4
+		self.x_vel = 10
+		self.y_vel = 0
+		self.alive = False
+
+		self.width = 5
+		self.height = 5
+		self.image = pygame.Surface([self.width, self.height])
+		self.image.fill(RED)
+		self.rect = self.image.get_rect()
+
+		self.level = None
+
+	def update(self):
+		# Move left/right
+		self.rect.x += self.x_vel
+
+		block_hit_list = pygame.sprite.spritecollide(self, self.level.block_list, True)
+		if len(block_hit_list) > 0:
+			self.alive = False

@@ -8,7 +8,6 @@ import entities
 
 
 def main():
-	global active_sprite_list
 	pygame.init()
 
 	screen_size = (SCREEN_WIDTH,SCREEN_HEIGHT)
@@ -25,12 +24,13 @@ def main():
 
 	#hardcode curent level 
 	current_level = level_list[0]
-	active_sprite_list = pygame.sprite.Group()
 
 	player.level = current_level
 	player.rect.x = 340
 	player.rect.y = SCREEN_HEIGHT - player.rect.height
-	active_sprite_list.add(player)
+	current_level.active_sprite_list.add(player)
+
+	current_level.spawn_zombies()
 
 	FPSCLOCK = pygame.time.Clock()
 
@@ -55,12 +55,18 @@ def main():
 				if event.key == pygame.K_d and player.x_vel > 0:
 					player.stop()
 
+			if event.type == MOUSEBUTTONDOWN:
+				bullet = entities.Bullet()
+				bullet.rect.x = player.rect.x
+				bullet.rect.y = player.rect.y
+				current_level.active_sprite_list.add(bullet)
+
 		#update level
-		active_sprite_list.update()
+		current_level.active_sprite_list.update()
 		current_level.update()
  
 		current_position = player.rect.x + current_level.world_shift
-		print current_position, current_level.level_limit
+
 
 		# Shift the world if the player is near the boundary
 		if player.rect.right >= right_boundary:
@@ -78,7 +84,8 @@ def main():
 
 		# Draw
 		current_level.render(screen)
-		active_sprite_list.draw(screen)
+		current_level.active_sprite_list.draw(screen)
+
 
 		FPSCLOCK.tick(FPS)
 

@@ -8,6 +8,7 @@ class Level:
 	def __init__(self, player):
 		self.block_list = pygame.sprite.Group()
 		self.enemy_list = pygame.sprite.Group()
+		self.active_sprite_list = pygame.sprite.Group()
 		self.player = player
 
 		#draw background
@@ -59,7 +60,7 @@ class Level:
 
 	def add_zombie(self, x, y):
 		#add zombie:
-		zombie = entities.Zombie()
+		zombie = entities.Zombie(self.player)
 		zombie.rect.x = x
 		zombie.rect.y = y # 
 		zombie.level = self
@@ -103,5 +104,5 @@ class Level_01(Level):
 
 	def spawn_zombies(self):
 		"""Handles waves and zombie spawning"""
-		zombie = self.add_zombie(230, SCREEN_HEIGHT - self.player.rect.height - 50, self.player)
-		active_sprite_list.add(zombie)
+		self.zombie = self.add_zombie(230, SCREEN_HEIGHT - self.player.rect.height - 50)
+		self.active_sprite_list.add(self.zombie)
