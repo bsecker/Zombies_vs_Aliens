@@ -2,6 +2,7 @@ import pygame
 import constants
 import blocks
 import entities
+import random
 
 class Level:
     """Generic superclass used to define a level. Child classes have specific level info."""
@@ -62,26 +63,29 @@ class Level_01(Level):
         """create level"""
         Level.__init__(self, player)
 
-        self.level_limit = -700
-        self.background = pygame.image.load("background_01.png").convert()
-        self.background.set_colorkey(constants.WHITE)
-
+        self.level_limit = -1500
+        #self.background = pygame.image.load("background_01.png").convert()
+        #self.background.set_colorkey(constants.WHITE)
+                #draw background
+        self.background = pygame.surface.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT)).convert()
+        self.background.fill(constants.BG_COLOUR)
 
         # Array with width, height, x, and y of blocks
-        level = [ [blocks.GRASS_LEFT, 500, 500],
-                  [blocks.GRASS_MIDDLE, 0, 300],
-                  [blocks.GRASS_MIDDLE, 570, 500],
-                  [blocks.GRASS_RIGHT, 640, 500],
-                  [blocks.GRASS_LEFT, 800, 400],
-                  [blocks.GRASS_MIDDLE, 870, 400],
-                  [blocks.GRASS_RIGHT, 940, 400],
-                  [blocks.GRASS_LEFT, 1000, 500],
-                  [blocks.GRASS_MIDDLE, 1070, 500],
-                  [blocks.GRASS_RIGHT, 1140, 500],
-                  [blocks.STONE_PLATFORM_LEFT, 1120, 280],
-                  [blocks.STONE_PLATFORM_MIDDLE, 1190, 280],
-                  [blocks.STONE_PLATFORM_RIGHT, 1260, 280],
-                  ]
+        # level = [ [blocks.GRASS_LEFT, 500, 500],
+        #           [blocks.GRASS_MIDDLE, 0, 300],
+        #           [blocks.GRASS_MIDDLE, 570, 500],
+        #           [blocks.GRASS_RIGHT, 640, 500],
+        #           [blocks.GRASS_LEFT, 800, 400],
+        #           [blocks.GRASS_MIDDLE, 870, 400],
+        #           [blocks.GRASS_RIGHT, 940, 400],
+        #           [blocks.GRASS_LEFT, 1000, 500],
+        #           [blocks.GRASS_MIDDLE, 1070, 500],
+        #           [blocks.GRASS_RIGHT, 1140, 500],
+        #           [blocks.STONE_PLATFORM_LEFT, 1120, 280],
+        #           [blocks.STONE_PLATFORM_MIDDLE, 1190, 280],
+        #           [blocks.STONE_PLATFORM_RIGHT, 1260, 280],
+        #           ]
+        level = self.generate_random_level(100)
  
         # Go through the array above and add blocks
         for _block in level:
@@ -90,6 +94,27 @@ class Level_01(Level):
             block.rect.y = _block[2]
             block.player = self.player
             self.block_list.add(block)
+
+    def generate_random_level(self, size):
+        """
+        Currently just makes a bottom row, and randomly places blocks on a row above. 
+        looks terrible
+        """
+        _bs = 70 # Block size
+        _x = -10
+        _y = constants.SCREEN_HEIGHT - _bs
+        level = []
+        while _x <= size:
+            if random.randrange(0,2) == 1:
+                level.append([blocks.GRASS_MIDDLE, _x*_bs, _y-_bs])
+                level.append([blocks.DIRT_MIDDLE, _x*_bs, _y]) #dirt underneath
+            else:
+                level.append([blocks.GRASS_MIDDLE, _x*_bs, _y])
+
+            _x += 1
+
+        print 'created {0} blocks'.format(len(level))
+        return level
 
     def spawn_zombies(self):
         """Handles waves and zombie spawning"""

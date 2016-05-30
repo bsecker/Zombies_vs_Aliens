@@ -4,6 +4,7 @@ DTG 300 Zombie Survival Game
 To do:
  - get sprite sheets working
  - take photos of stuff
+ - fix backgrounds breaking outside of limit
  
 Side Scroller 
 ideas:
