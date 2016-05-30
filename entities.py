@@ -1,5 +1,6 @@
 import pygame
 import constants
+import math
 
 from spritesheet_functions import SpriteSheet
 
@@ -18,7 +19,7 @@ class Entity(Base_Entity):
         self.max_gravity = 20
         self.jump_speed = 8
         self.gravity_accel = .30
-        self.move_speed = 4
+        self.move_speed = 7
         self.alive = True
 
         self.x_vel = 0 
@@ -140,27 +141,44 @@ class Player(Entity):
         Entity.__init__(self)
         self.ammo = 100
         self.health = 100
+        self.rot = 0
+
+    def update(self):
+        Entity.update(self)
 
     def fire(self):
         """ attack with current weapon 
         TEMPORARY"""
-        bullet = Bullet()
+        bullet = Bullet(self.rot)
         bullet.rect.x = self.rect.x
         bullet.rect.y = self.rect.y
         bullet.level = self.level
         return bullet
+
+    def get_rot(self, mouse_pos):
+        return math.atan2(mouse_pos[1]-self.rect.y,mouse_pos[0]-self.rect.x)
+
+class Weapon(Base_Entity):
+    def __init__(self):
+        """Superclass for all player weapons."""
+        Base_Entity.__init__(self)
+
+class Pistol(Weapon):
+    def __init__(self):
+        Weapon.__init__(self)
 
 
 class Bullet(Base_Entity):
     """
     TO DO: for now, just spawn bullets - in future handle bullet creation by weapon classes
     """
-    def __init__(self):
+    def __init__(self, rot):
         Base_Entity.__init__(self)
+        self.rot = rot
         self.move_speed = 4
-        self.x_vel = 10
-        self.y_vel = 0
-        self.alive = False
+        print self.rot
+        self.x_vel = math.cos(self.rot) * self.move_speed
+        self.y_vel = math.sin(self.rot) * self.move_speed
 
         self.width = 5
         self.height = 5
@@ -173,7 +191,17 @@ class Bullet(Base_Entity):
     def update(self):
         # Move left/right
         self.rect.x += self.x_vel
+        self.rect.y += self.y_vel
 
+        # Collide with objects
         block_hit_list = pygame.sprite.spritecollide(self, self.level.block_list, False)
         if len(block_hit_list) > 0:
-            self.remove()
+            self.kill()
+
+        current_position = self.rect.x + self.level.world_shift
+
+        # Destroy if outside world
+        if current_position > -self.level.level_limit:
+            self.kill()
+        elif current_position < self.level.level_limit:
+            self.kill()

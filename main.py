@@ -34,6 +34,8 @@ def main():
     FPSCLOCK = pygame.time.Clock()
 
     while True:
+        player.rot = player.get_rot(pygame.mouse.get_pos())
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 constants.terminate()

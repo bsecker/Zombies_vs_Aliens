@@ -8,6 +8,7 @@ class Level:
     def __init__(self, player):
         self.block_list = pygame.sprite.Group()
         self.enemy_list = pygame.sprite.Group()
+        self.entity_list= pygame.sprite.Group()
         self.active_sprite_list = pygame.sprite.Group()
         self.player = player
 
@@ -21,6 +22,7 @@ class Level:
     def update(self):
         self.block_list.update()
         self.enemy_list.update()
+        self.entity_list.update()
 
 
     def render(self, surface):
@@ -29,6 +31,7 @@ class Level:
         
         #draw all sprite lists
         self.block_list.draw(surface)
+        self.enemy_list.draw(surface)
         self.enemy_list.draw(surface)
 
     def shift_world(self, shift_x):
@@ -41,6 +44,7 @@ class Level:
  
         for enemy in self.enemy_list:
             enemy.rect.x += shift_x
+
 
     def add_zombie(self, x, y):
         #add zombie:
