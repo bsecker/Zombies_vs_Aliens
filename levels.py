@@ -1,5 +1,5 @@
 import pygame
-from constants import *
+import constants
 import blocks
 import entities
 
@@ -12,8 +12,8 @@ class Level:
         self.player = player
 
         #draw background
-        self.background = pygame.surface.Surface((SCREEN_WIDTH, SCREEN_HEIGHT)).convert()
-        self.background.fill(BG_COLOUR)
+        self.background = pygame.surface.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT)).convert()
+        self.background.fill(constants.BG_COLOUR)
 
         #how far this world has been scrolled left/right
         self.world_shift = 0
@@ -60,7 +60,7 @@ class Level_01(Level):
 
         self.level_limit = -700
         self.background = pygame.image.load("background_01.png").convert()
-        self.background.set_colorkey(WHITE)
+        self.background.set_colorkey(constants.WHITE)
 
 
         # Array with width, height, x, and y of blocks
@@ -88,5 +88,5 @@ class Level_01(Level):
 
     def spawn_zombies(self):
         """Handles waves and zombie spawning"""
-        self.zombie = self.add_zombie(230, SCREEN_HEIGHT - self.player.rect.height - 50)
+        self.zombie = self.add_zombie(230, constants.SCREEN_HEIGHT - self.player.rect.height - 50)
         self.active_sprite_list.add(self.zombie)

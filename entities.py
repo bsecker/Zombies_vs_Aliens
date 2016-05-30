@@ -1,179 +1,179 @@
 import pygame
-from constants import *
+import constants
 
 from spritesheet_functions import SpriteSheet
 
 class Base_Entity(pygame.sprite.Sprite):
-	"""Entity Superclass."""
-	def __init__(self):
-		pygame.sprite.Sprite.__init__(self)
+    """Entity Superclass."""
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
 
 class Entity(Base_Entity):
-	"""
-	Entity Base Class. For Zombies, player, etc
-	"""
-	def __init__(self):
-		Base_Entity.__init__(self)
+    """
+    Entity Base Class. For Zombies, player, etc
+    """
+    def __init__(self):
+        Base_Entity.__init__(self)
 
-		self.max_gravity = 20
-		self.jump_speed = 8
-		self.gravity_accel = .30
-		self.move_speed = 4
-		self.alive = True
+        self.max_gravity = 20
+        self.jump_speed = 8
+        self.gravity_accel = .30
+        self.move_speed = 4
+        self.alive = True
 
-		self.x_vel = 0 
-		self.y_vel = 0
-		self.direction = 'L'
+        self.x_vel = 0 
+        self.y_vel = 0
+        self.direction = 'L'
 
 
 
-		self.width = 20
-		self.height = 60
-		self.image = pygame.Surface([self.width, self.height])
-		self.image.fill(RED)
-		self.rect = self.image.get_rect()
+        self.width = 20
+        self.height = 60
+        self.image = pygame.Surface([self.width, self.height])
+        self.image.fill(constants.RED)
+        self.rect = self.image.get_rect()
 
-		self.level = None
+        self.level = None
 
-	def update(self):
-		self.calc_gravity()
+    def update(self):
+        self.calc_gravity()
 
-		# Move left/right
-		self.rect.x += self.x_vel
-		#collide with objects
-		block_hit_list = pygame.sprite.spritecollide(self, self.level.block_list, False)
-		for block in block_hit_list:
-			if self.x_vel > 0:
-				self.rect.right = block.rect.left
-			elif self.x_vel < 0:
-				self.rect.left = block.rect.right
+        # Move left/right
+        self.rect.x += self.x_vel
+        #collide with objects
+        block_hit_list = pygame.sprite.spritecollide(self, self.level.block_list, False)
+        for block in block_hit_list:
+            if self.x_vel > 0:
+                self.rect.right = block.rect.left
+            elif self.x_vel < 0:
+                self.rect.left = block.rect.right
 
-		#move up/down
-		self.rect.y += self.y_vel
-		# collide with objects
-		block_hit_list = pygame.sprite.spritecollide(self, self.level.block_list, False)
-		for block in block_hit_list:
-			# Reset our position based on the top/bottom of the object.
-			if self.y_vel > 0:
-				self.rect.bottom = block.rect.top
-			elif self.y_vel < 0:
-				self.rect.top = block.rect.bottom
+        #move up/down
+        self.rect.y += self.y_vel
+        # collide with objects
+        block_hit_list = pygame.sprite.spritecollide(self, self.level.block_list, False)
+        for block in block_hit_list:
+            # Reset our position based on the top/bottom of the object.
+            if self.y_vel > 0:
+                self.rect.bottom = block.rect.top
+            elif self.y_vel < 0:
+                self.rect.top = block.rect.bottom
  
-			# Stop our vertical movement
-			self.y_vel = 0
+            # Stop our vertical movement
+            self.y_vel = 0
 
 
-	def calc_gravity(self):
-		""" Calculate effect of gravity. """
-		if self.y_vel == 0:
-			self.y_vel = 1
-		else:
-			self.y_vel += self.gravity_accel
+    def calc_gravity(self):
+        """ Calculate effect of gravity. """
+        if self.y_vel == 0:
+            self.y_vel = 1
+        else:
+            self.y_vel += self.gravity_accel
  
-		# See if we are on the ground.
-		if self.rect.y >= SCREEN_HEIGHT - self.rect.height and self.y_vel >= 0:
-			self.y_vel = 0
-			self.rect.y = SCREEN_HEIGHT - self.rect.height
+        # See if we are on the ground.
+        if self.rect.y >= constants.SCREEN_HEIGHT - self.rect.height and self.y_vel >= 0:
+            self.y_vel = 0
+            self.rect.y = constants.SCREEN_HEIGHT - self.rect.height
 
-	def jump(self):
-		""" Called when user hits 'jump' button. """
+    def jump(self):
+        """ Called when user hits 'jump' button. """
  
-		# move down a bit and see if there is a platform below us.
-		# Move down 2 pixels because it doesn't work well if we only move down
-		# 1 when working with a platform moving down.
-		self.rect.y += 2
-		block_hit_list = pygame.sprite.spritecollide(self, self.level.block_list, False)
-		self.rect.y -= 2
+        # move down a bit and see if there is a platform below us.
+        # Move down 2 pixels because it doesn't work well if we only move down
+        # 1 when working with a platform moving down.
+        self.rect.y += 2
+        block_hit_list = pygame.sprite.spritecollide(self, self.level.block_list, False)
+        self.rect.y -= 2
  
-		# If it is ok to jump, set our speed upwards
-		if len(block_hit_list) > 0 or self.rect.bottom >= SCREEN_HEIGHT:
-			self.y_vel = -self.jump_speed
+        # If it is ok to jump, set our speed upwards
+        if len(block_hit_list) > 0 or self.rect.bottom >= constants.SCREEN_HEIGHT:
+            self.y_vel = -self.jump_speed
 
-	# Player-controlled movement:
-	def go_left(self):
-		""" Called when the user hits the left arrow. """
-		self.x_vel = -self.move_speed
+    # Player-controlled movement:
+    def go_left(self):
+        """ Called when the user hits the left arrow. """
+        self.x_vel = -self.move_speed
  
-	def go_right(self):
-		""" Called when the user hits the right arrow. """
-		self.x_vel = self.move_speed
+    def go_right(self):
+        """ Called when the user hits the right arrow. """
+        self.x_vel = self.move_speed
  
-	def stop(self):
-		""" Called when the user lets off the keyboard. """
-		self.x_vel = 0
+    def stop(self):
+        """ Called when the user lets off the keyboard. """
+        self.x_vel = 0
 
 class Zombie(Entity):
-	def __init__(self, player):
-		Entity.__init__(self)
-		self.move_speed = 1
-		self.player = player
+    def __init__(self, player):
+        Entity.__init__(self)
+        self.move_speed = 1
+        self.player = player
 
-	def update(self):
-		"""
-		'Brains' for the zombies go here
-		"""
-		Entity.update(self)
+    def update(self):
+        """
+        'Brains' for the zombies go here
+        """
+        Entity.update(self)
 
-		# Head towards player
-		if self.rect.x <= self.player.rect.x:
-			self.go_right()
-		else:
-			self.go_left()
+        # Head towards player
+        if self.rect.x <= self.player.rect.x:
+            self.go_right()
+        else:
+            self.go_left()
 
-		# Jump if colliding with an object (REWRITE THIS IN FEWER LINES)
-		# move to the right a bit and check collisions then back
-		self.rect.x += 2
-		block_hit_list = pygame.sprite.spritecollide(self, self.level.block_list, False)
-		self.rect.x +=- 2
-		if len(block_hit_list) > 0:
-			self.jump()
-		self.rect.x +=- 2
+        # Jump if colliding with an object (REWRITE THIS IN FEWER LINES)
+        # move to the right a bit and check collisions then back
+        self.rect.x += 2
+        block_hit_list = pygame.sprite.spritecollide(self, self.level.block_list, False)
+        self.rect.x +=- 2
+        if len(block_hit_list) > 0:
+            self.jump()
+        self.rect.x +=- 2
 
-		#check left
-		block_hit_list = pygame.sprite.spritecollide(self, self.level.block_list, False)
-		self.rect.x += 2
-		if len(block_hit_list) > 0:
-			self.jump()
+        #check left
+        block_hit_list = pygame.sprite.spritecollide(self, self.level.block_list, False)
+        self.rect.x += 2
+        if len(block_hit_list) > 0:
+            self.jump()
 
 class Player(Entity):
-	def __init__(self):
-		Entity.__init__(self)
-		self.ammo = 100
-		self.health = 100
+    def __init__(self):
+        Entity.__init__(self)
+        self.ammo = 100
+        self.health = 100
 
-	def fire(self):
-		""" attack with current weapon 
-		TEMPORARY"""
-		bullet = Bullet()
-		bullet.rect.x = self.rect.x
-		bullet.rect.y = self.rect.y
-		bullet.level = self.level
-		return bullet
+    def fire(self):
+        """ attack with current weapon 
+        TEMPORARY"""
+        bullet = Bullet()
+        bullet.rect.x = self.rect.x
+        bullet.rect.y = self.rect.y
+        bullet.level = self.level
+        return bullet
 
 
 class Bullet(Base_Entity):
-	"""
-	TO DO: for now, just spawn bullets - in future handle bullet creation by weapon classes
-	"""
-	def __init__(self):
-		Base_Entity.__init__(self)
-		self.move_speed = 4
-		self.x_vel = 10
-		self.y_vel = 0
-		self.alive = False
+    """
+    TO DO: for now, just spawn bullets - in future handle bullet creation by weapon classes
+    """
+    def __init__(self):
+        Base_Entity.__init__(self)
+        self.move_speed = 4
+        self.x_vel = 10
+        self.y_vel = 0
+        self.alive = False
 
-		self.width = 5
-		self.height = 5
-		self.image = pygame.Surface([self.width, self.height])
-		self.image.fill(RED)
-		self.rect = self.image.get_rect()
+        self.width = 5
+        self.height = 5
+        self.image = pygame.Surface([self.width, self.height])
+        self.image.fill(constants.RED)
+        self.rect = self.image.get_rect()
 
-		self.level = None
+        self.level = None
 
-	def update(self):
-		# Move left/right
-		self.rect.x += self.x_vel
+    def update(self):
+        # Move left/right
+        self.rect.x += self.x_vel
 
-		block_hit_list = pygame.sprite.spritecollide(self, self.level.block_list, False)
-		if len(block_hit_list) > 0:
-			self.remove()
+        block_hit_list = pygame.sprite.spritecollide(self, self.level.block_list, False)
+        if len(block_hit_list) > 0:
+            self.remove()
