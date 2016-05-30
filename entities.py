@@ -92,10 +92,12 @@ class Entity(Base_Entity):
     def go_left(self):
         """ Called when the user hits the left arrow. """
         self.x_vel = -self.move_speed
+        self.direction = 'L'
  
     def go_right(self):
         """ Called when the user hits the right arrow. """
         self.x_vel = self.move_speed
+        self.direction = 'R'
  
     def stop(self):
         """ Called when the user lets off the keyboard. """
@@ -141,20 +143,14 @@ class Player(Entity):
         self.health = 100
         self.rot = 0
 
-    def update(self):
-        Entity.update(self)
-
     def fire(self):
         """ attack with current weapon 
         TEMPORARY"""
-        bullet = Bullet(self.rot)
+        bullet = Bullet(self.direction)
         bullet.rect.x = self.rect.x
         bullet.rect.y = self.rect.y
         bullet.level = self.level
         return bullet
-
-    def get_rot(self, mouse_pos):
-        return math.atan2(mouse_pos[1]-self.rect.y,mouse_pos[0]-self.rect.x)
 
 class Weapon(Base_Entity):
     def __init__(self):
@@ -170,12 +166,10 @@ class Bullet(Base_Entity):
     """
     TO DO: for now, just spawn bullets - in future handle bullet creation by weapon classes
     """
-    def __init__(self, rot):
+    def __init__(self, dir):
         Base_Entity.__init__(self)
-        self.rot = rot
+        self.direction = dir
         self.move_speed = 10
-        self.x_vel = math.cos(self.rot) * self.move_speed
-        self.y_vel = math.sin(self.rot) * self.move_speed
 
         self.width = 5
         self.height = 5
@@ -187,10 +181,10 @@ class Bullet(Base_Entity):
 
     def update(self):
         # Move left/right
-        self.rect.x += self.x_vel
-        self.rect.y += self.y_vel
-
-        print self.x_vel
+        if self.direction == 'L':
+            self.rect.x +=- self.move_speed
+        else:
+            self.rect.x += self.move_speed
 
         # Collide with objects
         block_hit_list = pygame.sprite.spritecollide(self, self.level.block_list, False)

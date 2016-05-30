@@ -69,6 +69,7 @@ class Level_01(Level):
 
         # Array with width, height, x, and y of blocks
         level = [ [blocks.GRASS_LEFT, 500, 500],
+                  [blocks.GRASS_MIDDLE, 0, 300],
                   [blocks.GRASS_MIDDLE, 570, 500],
                   [blocks.GRASS_RIGHT, 640, 500],
                   [blocks.GRASS_LEFT, 800, 400],

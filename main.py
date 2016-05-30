@@ -34,31 +34,31 @@ def main():
     FPSCLOCK = pygame.time.Clock()
 
     while True:
-        player.rot = player.get_rot(pygame.mouse.get_pos())
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 constants.terminate()
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_a:
+                if event.key == pygame.K_LEFT:
                     player.go_left()
-                if event.key == pygame.K_d:
+                if event.key == pygame.K_RIGHT:
                     player.go_right()
-                if event.key == pygame.K_w:
+                if event.key == pygame.K_SPACE:
                     player.jump()
+                if event.key == pygame.K_z:
+                    bullet = player.fire()
+                    current_level.active_sprite_list.add(bullet)
                 if event.key == pygame.K_ESCAPE:
                     constants.terminate()
  
             if event.type == pygame.KEYUP:
-                if event.key == pygame.K_a and player.x_vel < 0:
+                if event.key == pygame.K_LEFT and player.x_vel < 0:
                     player.stop()
-                if event.key == pygame.K_d and player.x_vel > 0:
+                if event.key == pygame.K_RIGHT and player.x_vel > 0:
                     player.stop()
 
-            if event.type == MOUSEBUTTONDOWN:
-                bullet = player.fire()
-                current_level.active_sprite_list.add(bullet)
+
 
         #update level
         current_level.active_sprite_list.update()
