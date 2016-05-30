@@ -29,7 +29,7 @@ def main():
     player.rect.y = constants.SCREEN_HEIGHT - player.rect.height
 
     current_level.active_sprite_list.add(player)
-    current_level.spawn_zombies()
+    # current_level.spawn_zombies()
 
     FPSCLOCK = pygame.time.Clock()
 
@@ -92,7 +92,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
-

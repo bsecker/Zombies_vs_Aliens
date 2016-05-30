@@ -17,7 +17,7 @@ class Entity(Base_Entity):
         Base_Entity.__init__(self)
 
         self.max_gravity = 20
-        self.jump_speed = 8
+        self.jump_speed = 9
         self.gravity_accel = .30
         self.move_speed = 7
         self.alive = True
@@ -66,9 +66,7 @@ class Entity(Base_Entity):
 
     def calc_gravity(self):
         """ Calculate effect of gravity. """
-        if self.y_vel == 0:
-            self.y_vel = 1
-        else:
+        if self.y_vel <= self.max_gravity:
             self.y_vel += self.gravity_accel
  
         # See if we are on the ground.
@@ -175,8 +173,7 @@ class Bullet(Base_Entity):
     def __init__(self, rot):
         Base_Entity.__init__(self)
         self.rot = rot
-        self.move_speed = 4
-        print self.rot
+        self.move_speed = 10
         self.x_vel = math.cos(self.rot) * self.move_speed
         self.y_vel = math.sin(self.rot) * self.move_speed
 
@@ -193,6 +190,8 @@ class Bullet(Base_Entity):
         self.rect.x += self.x_vel
         self.rect.y += self.y_vel
 
+        print self.x_vel
+
         # Collide with objects
         block_hit_list = pygame.sprite.spritecollide(self, self.level.block_list, False)
         if len(block_hit_list) > 0:
@@ -200,7 +199,7 @@ class Bullet(Base_Entity):
 
         current_position = self.rect.x + self.level.world_shift
 
-        # Destroy if outside world
+        # # Destroy if outside world
         if current_position > -self.level.level_limit:
             self.kill()
         elif current_position < self.level.level_limit:

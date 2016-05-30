@@ -27,7 +27,8 @@ class Level:
 
     def render(self, surface):
         """draw the background and all the entities"""
-        surface.blit(self.background, (self.world_shift // 3,0))
+
+        surface.blit(self.background, (0,0))#(self.world_shift // 3,0))
         
         #draw all sprite lists
         self.block_list.draw(surface)
@@ -44,7 +45,6 @@ class Level:
  
         for enemy in self.enemy_list:
             enemy.rect.x += shift_x
-
 
     def add_zombie(self, x, y):
         #add zombie:
