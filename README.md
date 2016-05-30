@@ -1,7 +1,10 @@
 # dtg300_zombiegame
 DTG 300 Zombie Survival Game
 
-
+To do:
+ - get sprite sheets working
+ - take photos of stuff
+ 
 Side Scroller 
 ideas:
 - Mike Sivali - main character
@@ -10,7 +13,6 @@ ideas:
 - Boss battles:
 	- Mr Stack
 	- Wirecam
-
 - set in school grounds
 - pixel art
 - primo bottles for health

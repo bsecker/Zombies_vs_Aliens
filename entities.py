@@ -147,14 +147,16 @@ class Player(Entity):
 		bullet = Bullet()
 		bullet.rect.x = self.rect.x
 		bullet.rect.y = self.rect.y
+		bullet.level = self.level
 		return bullet
 
 
-class Bullet:
+class Bullet(Base_Entity):
 	"""
 	TO DO: for now, just spawn bullets - in future handle bullet creation by weapon classes
 	"""
 	def __init__(self):
+		Base_Entity.__init__(self)
 		self.move_speed = 4
 		self.x_vel = 10
 		self.y_vel = 0
@@ -172,6 +174,6 @@ class Bullet:
 		# Move left/right
 		self.rect.x += self.x_vel
 
-		block_hit_list = pygame.sprite.spritecollide(self, self.level.block_list, True)
+		block_hit_list = pygame.sprite.spritecollide(self, self.level.block_list, False)
 		if len(block_hit_list) > 0:
-			self.alive = False
+			self.remove()
