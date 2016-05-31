@@ -25,7 +25,7 @@ def main():
     current_level = level_list[0]
 
     player.level = current_level
-    player.rect.x = 0
+    player.rect.x = constants.SCREEN_WIDTH/2
     player.rect.y = constants.SCREEN_HEIGHT - player.rect.height*2
 
     current_level.active_sprite_list.add(player)

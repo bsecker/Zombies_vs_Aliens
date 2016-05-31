@@ -85,7 +85,7 @@ class Level_01(Level):
         #           [blocks.STONE_PLATFORM_MIDDLE, 1190, 280],
         #           [blocks.STONE_PLATFORM_RIGHT, 1260, 280],
         #           ]
-        level = self.generate_random_level(100)
+        level = self.generate_random_level(3500)
  
         # Go through the array above and add blocks
         for _block in level:
@@ -101,17 +101,17 @@ class Level_01(Level):
         looks terrible
         """
         _bs = 70 # Block size
-        _x = -10
+        _x = -30*_bs
         _y = constants.SCREEN_HEIGHT - _bs
         level = []
         while _x <= size:
             if random.randrange(0,2) == 1:
-                level.append([blocks.GRASS_MIDDLE, _x*_bs, _y-_bs])
-                level.append([blocks.DIRT_MIDDLE, _x*_bs, _y]) #dirt underneath
+                level.append([blocks.GRASS_MIDDLE, _x, _y-_bs])
+                level.append([blocks.DIRT_MIDDLE, _x, _y]) #dirt underneath
             else:
-                level.append([blocks.GRASS_MIDDLE, _x*_bs, _y])
+                level.append([blocks.GRASS_MIDDLE, _x, _y])
 
-            _x += 1
+            _x += _bs
 
         print 'created {0} blocks'.format(len(level))
         return level
