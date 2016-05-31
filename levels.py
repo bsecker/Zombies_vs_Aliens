@@ -5,7 +5,7 @@ import entities
 import random
 
 class Level:
-    """Generic superclass used to define a level. Child classes have specific level info."""
+    """ Generic superclass used to define a level. Child classes have specific level info."""
     def __init__(self, player):
         self.block_list = pygame.sprite.Group()
         self.enemy_list = pygame.sprite.Group()
@@ -13,17 +13,24 @@ class Level:
         self.active_sprite_list = pygame.sprite.Group()
         self.player = player
 
-        #draw background
+        # Draw background
         self.background = pygame.surface.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT)).convert()
         self.background.fill(constants.BG_COLOUR)
 
-        #how far this world has been scrolled left/right
+        # How far this world has been scrolled left/right
         self.world_shift = 0
+
+        # Zombie spawn points
+        self.spawn1 = None
+        self.spawn2 = None
+        self.zombie_chance = 150
 
     def update(self):
         self.block_list.update()
         self.enemy_list.update()
         self.entity_list.update()
+
+        self.spawn_zombies()
 
 
     def render(self, surface):
@@ -31,10 +38,10 @@ class Level:
 
         surface.blit(self.background, (0,0))#(self.world_shift // 3,0))
         
-        #draw all sprite lists
+        # Draw all sprite lists
         self.block_list.draw(surface)
         self.enemy_list.draw(surface)
-        self.enemy_list.draw(surface)
+        self.entity_list.draw(surface)
 
     def shift_world(self, shift_x):
         """ When the user moves left/right scroll everything:"""
@@ -56,9 +63,20 @@ class Level:
         self.enemy_list.add(zombie)
         return zombie
 
+    def spawn_zombies(self):
+        """Handles waves and zombie spawning"""
+        if random.randrange(0,int(self.zombie_chance)) == 1:
+            self.zombie = self.add_zombie(random.choice([self.spawn1, self.spawn2]), 0) # Spawn at top of screen (zombies don't feel fall damage)
+            self.active_sprite_list.add(self.zombie)
+            self.zombie_chance +=- 0.5
+            print self.zombie_chance
+
 
 class Level_01(Level):
-    """Level 1: Front of Chapel"""
+    """
+    Level 1
+    Other levels aren't being used yet, but doing it like this leaves it open for the future.
+    """
     def __init__(self, player):
         """create level"""
         Level.__init__(self, player)
@@ -66,7 +84,7 @@ class Level_01(Level):
         self.level_limit = -1500
         #self.background = pygame.image.load("background_01.png").convert()
         #self.background.set_colorkey(constants.WHITE)
-                #draw background
+        #draw background
         self.background = pygame.surface.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT)).convert()
         self.background.fill(constants.BG_COLOUR)
 
@@ -86,6 +104,8 @@ class Level_01(Level):
         #           [blocks.STONE_PLATFORM_RIGHT, 1260, 280],
         #           ]
         level = self.generate_random_level(3500)
+        self.spawn1 = -1000
+        self.spawn2 = 1000
  
         # Go through the array above and add blocks
         for _block in level:
@@ -105,18 +125,28 @@ class Level_01(Level):
         _y = constants.SCREEN_HEIGHT - _bs
         level = []
         while _x <= size:
-            if random.randrange(0,2) == 1:
-                level.append([blocks.GRASS_MIDDLE, _x, _y-_bs])
-                level.append([blocks.DIRT_MIDDLE, _x, _y]) #dirt underneath
-            else:
-                level.append([blocks.GRASS_MIDDLE, _x, _y])
+            _direction = random.randrange(0,5)
+            # Go up
+            if _direction == 1:
+                if _y > constants.SCREEN_HEIGHT-(_bs*3):
+                    _y +=- _bs
+            # Go down
+            elif _direction == 2:
+                if _y < constants.SCREEN_HEIGHT-_bs:
+                    _y += _bs
 
-            _x += _bs
+            level.append([blocks.GRASS_MIDDLE, _x, _y])
 
-        print 'created {0} blocks'.format(len(level))
+            #add blocks underneath
+            if _y <= constants.SCREEN_HEIGHT-(_bs*2):
+                level.append([blocks.DIRT_MIDDLE, _x, _y+_bs])
+                level.append([blocks.DIRT_MIDDLE, _x, _y+_bs*2])
+            elif _y <= constants.SCREEN_HEIGHT-_bs:
+                level.append([blocks.DIRT_MIDDLE, _x, _y+(_bs*2)])
+
+            _x+= _bs
+            
+
+        print 'creating {0} blocks..'.format(len(level))
         return level
 
-    def spawn_zombies(self):
-        """Handles waves and zombie spawning"""
-        self.zombie = self.add_zombie(230, constants.SCREEN_HEIGHT - self.player.rect.height - 50)
-        self.active_sprite_list.add(self.zombie)

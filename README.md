@@ -4,7 +4,11 @@ DTG 300 Zombie Survival Game
 To do:
  - get sprite sheets working
  - take photos of stuff
+
+Bugs
  - fix backgrounds breaking outside of limit
+ - bullets don't fire properly in some places - why??
+ 
  
 Side Scroller 
 ideas:

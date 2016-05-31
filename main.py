@@ -29,7 +29,6 @@ def main():
     player.rect.y = constants.SCREEN_HEIGHT - player.rect.height*2
 
     current_level.active_sprite_list.add(player)
-    current_level.spawn_zombies()
 
     FPSCLOCK = pygame.time.Clock()
 
@@ -58,14 +57,11 @@ def main():
                 if event.key == pygame.K_RIGHT and player.x_vel > 0:
                     player.stop()
 
-
-
         #update level
         current_level.active_sprite_list.update()
         current_level.update()
  
         current_position = player.rect.x + current_level.world_shift
-
         # Shift the world if the player is near the boundary
         if player.rect.right >= constants.right_boundary:
             diff = player.rect.right - constants.right_boundary
@@ -79,8 +75,6 @@ def main():
             player.rect.left = constants.left_boundary
             if current_position <= -current_level.level_limit:
                 current_level.shift_world(diff)     
-
-
         # Draw
         current_level.render(screen)
         current_level.active_sprite_list.draw(screen)
