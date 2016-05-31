@@ -16,14 +16,14 @@ PURPLE   = (255,   0, 255)
 CYAN     = (  0, 255, 255)
 BLACK    = (  0,   0,   0) 
 
-BG_COLOUR = BLACK
+BG_COLOUR = BLUE
 
 FPS = 60
 
 # Screen Variables
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
-boundary = 250
+boundary = 350
 
 right_boundary = SCREEN_WIDTH - boundary
 left_boundary = boundary
