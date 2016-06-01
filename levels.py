@@ -25,12 +25,22 @@ class Level:
         self.spawn2 = None
         self.zombie_chance = 150
 
+        # Score
+        self.score = 0
+
+        # Font
+        self.font = pygame.font.SysFont(None, 36)
+
     def update(self):
         self.block_list.update()
         self.enemy_list.update()
         self.entity_list.update()
 
         self.spawn_zombies()
+
+        # Increment score as long as player is alive
+        if self.player.alive == True:
+            self.score += 0.05
 
 
     def render(self, surface):
@@ -42,6 +52,10 @@ class Level:
         self.block_list.draw(surface)
         self.enemy_list.draw(surface)
         self.entity_list.draw(surface)
+
+        # Draw UI
+        self.draw_healthbar(surface,self.player.health)
+        self.draw_score(surface, self.score)
 
     def shift_world(self, shift_x):
         """ When the user moves left/right scroll everything:"""
@@ -71,6 +85,16 @@ class Level:
             self.zombie_chance +=- 0.5
             print self.zombie_chance
 
+    def draw_healthbar(self, surface, health):
+        _max_width = 100 # Width of healthbar
+        pygame.draw.rect(surface, constants.RED, (50, 50, _max_width, 20))
+        pygame.draw.rect(surface, constants.GREEN, (50, 50, self.player.health,20))
+
+    def draw_score(self, surface, score):
+        """render score"""
+        score_text = self.font.render(str(int(score)), 1, constants.YELLOW)
+        surface.blit(score_text, (constants.HALF_SCREEN_WIDTH, 50))
+
 
 class Level_01(Level):
     """
@@ -89,23 +113,23 @@ class Level_01(Level):
         self.background.fill(constants.BG_COLOUR)
 
         # Array with width, height, x, and y of blocks
-        # level = [ [blocks.GRASS_LEFT, 500, 500],
-        #           [blocks.GRASS_MIDDLE, 0, 300],
-        #           [blocks.GRASS_MIDDLE, 570, 500],
-        #           [blocks.GRASS_RIGHT, 640, 500],
-        #           [blocks.GRASS_LEFT, 800, 400],
-        #           [blocks.GRASS_MIDDLE, 870, 400],
-        #           [blocks.GRASS_RIGHT, 940, 400],
-        #           [blocks.GRASS_LEFT, 1000, 500],
-        #           [blocks.GRASS_MIDDLE, 1070, 500],
-        #           [blocks.GRASS_RIGHT, 1140, 500],
-        #           [blocks.STONE_PLATFORM_LEFT, 1120, 280],
-        #           [blocks.STONE_PLATFORM_MIDDLE, 1190, 280],
-        #           [blocks.STONE_PLATFORM_RIGHT, 1260, 280],
-        #           ]
-        level = self.generate_random_level(3500)
-        self.spawn1 = -1000
-        self.spawn2 = 1000
+        level = [ [blocks.GRASS_LEFT, 500, 500],
+                  [blocks.GRASS_MIDDLE, 0, 300],
+                  [blocks.GRASS_MIDDLE, 570, 500],
+                  [blocks.GRASS_RIGHT, 640, 500],
+                  [blocks.GRASS_LEFT, 800, 400],
+                  [blocks.GRASS_MIDDLE, 870, 400],
+                  [blocks.GRASS_RIGHT, 940, 400],
+                  [blocks.GRASS_LEFT, 1000, 500],
+                  [blocks.GRASS_MIDDLE, 1070, 500],
+                  [blocks.GRASS_RIGHT, 1140, 500],
+                  [blocks.STONE_PLATFORM_LEFT, 1120, 280],
+                  [blocks.STONE_PLATFORM_MIDDLE, 1190, 280],
+                  [blocks.STONE_PLATFORM_RIGHT, 1260, 280],
+                  ]
+        #level = self.generate_random_level(3500)
+        self.spawn1 = -2000
+        self.spawn2 = 2000
  
         # Go through the array above and add blocks
         for _block in level:

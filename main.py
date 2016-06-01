@@ -13,22 +13,27 @@ def main():
     screen = pygame.display.set_mode(screen_size, )#pygame.FULLSCREEN)
 
     pygame.display.set_caption(constants.WIN_CAPTION)
-    
-    # create player
+
+    # Create Player class
     player = entities.Player()
 
+    
     # Create all levels
     level_list = []
     level_list.append(levels.Level_01(player))
 
-    #hardcode curent level 
+    # Hardcode curent level 
     current_level = level_list[0]
+    
 
-    player.level = current_level
+    # Define player and entities
     player.rect.x = constants.SCREEN_WIDTH/2
     player.rect.y = constants.SCREEN_HEIGHT - player.rect.height*2
-
+    player.level = current_level
+    pistol = entities.Pistol(player)
+    current_level.entity_list.add(pistol)
     current_level.active_sprite_list.add(player)
+    player.current_weapon = pistol
 
     FPSCLOCK = pygame.time.Clock()
 
@@ -44,9 +49,9 @@ def main():
                 if event.key == pygame.K_RIGHT:
                     player.go_right()
                 if event.key == pygame.K_SPACE:
-                    player.jump()
+                    player.jump() 
                 if event.key == pygame.K_z:
-                    bullet = player.fire()
+                    bullet = player.current_weapon.fire()
                     current_level.active_sprite_list.add(bullet)
                 if event.key == pygame.K_ESCAPE:
                     constants.terminate()

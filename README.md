@@ -4,10 +4,12 @@ DTG 300 Zombie Survival Game
 To do:
  - get sprite sheets working
  - take photos of stuff
-
+ - limit amount of zombies in world
+ - reload time
+ - smooth movement
 Bugs
- - fix backgrounds breaking outside of limit
- - bullets don't fire properly in some places - why??
+ - Weapon creation and player init is a mess.
+ 
  
  
 Side Scroller 

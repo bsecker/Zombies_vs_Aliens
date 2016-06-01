@@ -148,6 +148,8 @@ class Player(Entity):
         self.health = 100
         self.rot = 0
 
+        self.current_weapon = None
+
         # Frames of animated walking left/right
         self.walking_frames_l = []
         self.walking_frames_r = []
@@ -199,14 +201,6 @@ class Player(Entity):
         # Set a reference to the image rect.
         self.rect = self.image.get_rect()
 
-    def fire(self):
-        """ attack with current weapon 
-        TEMPORARY"""
-        bullet = Bullet(self.direction)
-        bullet.rect.x = self.rect.x+(self.rect.width/2)
-        bullet.rect.y = self.rect.y+(self.rect.height/2)
-        bullet.level = self.level
-        return bullet
 
     def update(self):
         Entity.update(self)
@@ -231,13 +225,49 @@ class Player(Entity):
             self.image = self.walking_frames_l[frame]
 
 class Weapon(Base_Entity):
-    def __init__(self):
+    def __init__(self, player):
         """Superclass for all player weapons."""
         Base_Entity.__init__(self)
+        self.player = player
+
+        # Image list - [0] facing right and [1] facing left
+        self.images = []
+        self.images.append(pygame.image.load("Resources/sprite_pistol.png").convert_alpha())
+        self.images.append(pygame.transform.flip(self.images[0], True, False)) # Flipped 
+        self.image = self.images[0]
+
+        self.rect = self.image.get_rect()
+        self.direction = self.player.direction
+        self.level = player.level
+
+    def update(self):
+        self.rect.center = self.player.rect.center
+        self.direction = self.player.direction
+
+        if self.direction == 'R':
+            self.image = self.images[0]
+        else:
+            self.image = self.images[1]
+
+    def fire(self):
+        """ attack with current weapon """
+        bullet = Bullet(self.direction)
+        bullet.rect.x = self.rect.x+(self.rect.width/2)
+        bullet.rect.y = self.rect.y+(self.rect.height/2)
+        bullet.level = self.level
+        return bullet
 
 class Pistol(Weapon):
-    def __init__(self):
-        Weapon.__init__(self)
+    def __init__(self, player):
+        Weapon.__init__(self, player)
+
+class Shotgun(Weapon):
+    def __init__(self, player):
+        Weapon.__init__(self, player)
+
+class MachineGun(Weapon):
+    def __init__(self, player):
+        Weapon.__init__(self, player)
 
 
 class Bullet(Base_Entity):
