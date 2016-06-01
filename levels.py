@@ -10,7 +10,7 @@ class Level:
         self.block_list = pygame.sprite.Group()
         self.enemy_list = pygame.sprite.Group()
         self.entity_list= pygame.sprite.Group()
-        self.active_sprite_list = pygame.sprite.Group()
+        self.player_list= pygame.sprite.LayeredUpdates()
         self.player = player
 
         # Draw background
@@ -35,13 +35,13 @@ class Level:
         self.block_list.update()
         self.enemy_list.update()
         self.entity_list.update()
+        self.player_list.update()
 
         self.spawn_zombies()
 
         # Increment score as long as player is alive
         if self.player.alive == True:
-            self.score += 0.05
-
+            self.score += 0.005
 
     def render(self, surface):
         """draw the background and all the entities"""
@@ -52,6 +52,7 @@ class Level:
         self.block_list.draw(surface)
         self.enemy_list.draw(surface)
         self.entity_list.draw(surface)
+        self.player_list.draw(surface)
 
         # Draw UI
         self.draw_healthbar(surface,self.player.health)
@@ -80,8 +81,7 @@ class Level:
     def spawn_zombies(self):
         """Handles waves and zombie spawning"""
         if random.randrange(0,int(self.zombie_chance)) == 1:
-            self.zombie = self.add_zombie(random.choice([self.spawn1, self.spawn2]), 0) # Spawn at top of screen (zombies don't feel fall damage)
-            self.active_sprite_list.add(self.zombie)
+            self.zombie = self.add_zombie(random.choice([self.spawn1, self.spawn2]), 0) # Spawn at top of screen (zombies don't feel fall damage))
             self.zombie_chance +=- 0.5
             print self.zombie_chance
 
@@ -94,6 +94,10 @@ class Level:
         """render score"""
         score_text = self.font.render(str(int(score)), 1, constants.YELLOW)
         surface.blit(score_text, (constants.HALF_SCREEN_WIDTH, 50))
+
+    def draw_fps(self, surface, fps):
+        fps_text = self.font.render(str(fps.get_fps()), 1, constants.YELLOW)
+        surface.blit(fps_text, (constants.SCREEN_WIDTH-70, 50))
 
 
 class Level_01(Level):
@@ -113,21 +117,21 @@ class Level_01(Level):
         self.background.fill(constants.BG_COLOUR)
 
         # Array with width, height, x, and y of blocks
-        level = [ [blocks.GRASS_LEFT, 500, 500],
-                  [blocks.GRASS_MIDDLE, 0, 300],
-                  [blocks.GRASS_MIDDLE, 570, 500],
-                  [blocks.GRASS_RIGHT, 640, 500],
-                  [blocks.GRASS_LEFT, 800, 400],
-                  [blocks.GRASS_MIDDLE, 870, 400],
-                  [blocks.GRASS_RIGHT, 940, 400],
-                  [blocks.GRASS_LEFT, 1000, 500],
-                  [blocks.GRASS_MIDDLE, 1070, 500],
-                  [blocks.GRASS_RIGHT, 1140, 500],
-                  [blocks.STONE_PLATFORM_LEFT, 1120, 280],
-                  [blocks.STONE_PLATFORM_MIDDLE, 1190, 280],
-                  [blocks.STONE_PLATFORM_RIGHT, 1260, 280],
-                  ]
-        #level = self.generate_random_level(3500)
+        # level = [ [blocks.GRASS_LEFT, 500, 500],
+        #           [blocks.GRASS_MIDDLE, 0, 300],
+        #           [blocks.GRASS_MIDDLE, 570, 500],
+        #           [blocks.GRASS_RIGHT, 640, 500],
+        #           [blocks.GRASS_LEFT, 800, 400],
+        #           [blocks.GRASS_MIDDLE, 870, 400],
+        #           [blocks.GRASS_RIGHT, 940, 400],
+        #           [blocks.GRASS_LEFT, 1000, 500],
+        #           [blocks.GRASS_MIDDLE, 1070, 500],
+        #           [blocks.GRASS_RIGHT, 1140, 500],
+        #           [blocks.STONE_PLATFORM_LEFT, 1120, 280],
+        #           [blocks.STONE_PLATFORM_MIDDLE, 1190, 280],
+        #           [blocks.STONE_PLATFORM_RIGHT, 1260, 280],
+        #           ]
+        level = self.generate_random_level(3500)
         self.spawn1 = -2000
         self.spawn2 = 2000
  

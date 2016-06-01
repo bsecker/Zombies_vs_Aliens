@@ -17,22 +17,21 @@ def main():
     # Create Player class
     player = entities.Player()
 
-    
     # Create all levels
     level_list = []
     level_list.append(levels.Level_01(player))
 
+
     # Hardcode curent level 
     current_level = level_list[0]
+    current_level.player_list.add(player)
     
-
     # Define player and entities
     player.rect.x = constants.SCREEN_WIDTH/2
     player.rect.y = constants.SCREEN_HEIGHT - player.rect.height*2
     player.level = current_level
     pistol = entities.Pistol(player)
-    current_level.entity_list.add(pistol)
-    current_level.active_sprite_list.add(player)
+    current_level.player_list.add(pistol)
     player.current_weapon = pistol
 
     FPSCLOCK = pygame.time.Clock()
@@ -52,7 +51,7 @@ def main():
                     player.jump() 
                 if event.key == pygame.K_z:
                     bullet = player.current_weapon.fire()
-                    current_level.active_sprite_list.add(bullet)
+                    current_level.entity_list.add(bullet)
                 if event.key == pygame.K_ESCAPE:
                     constants.terminate()
  
@@ -63,9 +62,8 @@ def main():
                     player.stop()
 
         #update level
-        current_level.active_sprite_list.update()
         current_level.update()
- 
+
         current_position = player.rect.x + current_level.world_shift
         # Shift the world if the player is near the boundary
         if player.rect.right >= constants.right_boundary:
@@ -82,8 +80,7 @@ def main():
                 current_level.shift_world(diff)     
         # Draw
         current_level.render(screen)
-        current_level.active_sprite_list.draw(screen)
-
+        current_level.draw_fps(screen, FPSCLOCK)
 
         FPSCLOCK.tick(constants.FPS)
 

@@ -119,6 +119,7 @@ class Zombie(Entity):
         # Die
         if self.health <= 0:
             self.kill()
+            self.level.score += 5
 
         # Head towards player
         if self.rect.x <= self.player.rect.x:
@@ -224,6 +225,7 @@ class Player(Entity):
             frame = (pos // 30) % len(self.walking_frames_l)
             self.image = self.walking_frames_l[frame]
 
+
 class Weapon(Base_Entity):
     def __init__(self, player):
         """Superclass for all player weapons."""
@@ -287,7 +289,6 @@ class Bullet(Base_Entity):
         self.image.fill(constants.BLACK)
         self.rect = self.image.get_rect()
 
-
         self.level = None
 
     def update(self):
@@ -298,7 +299,6 @@ class Bullet(Base_Entity):
             self.kill()
         else:
             self.alive_time += 1
-
 
         # Move left/right
         if self.direction == 'L':
@@ -314,5 +314,7 @@ class Bullet(Base_Entity):
         # Collide with enemies
         enemy_hit_list = pygame.sprite.spritecollide(self, self.level.enemy_list, False)
         if len(enemy_hit_list) > 0:
+            # check if player
             self.kill()
             enemy_hit_list[0].health +=- 1
+
