@@ -26,8 +26,6 @@ class Entity(Base_Entity):
         self.y_vel = 0
         self.direction = 'L'
 
-
-
         self.width = 20
         self.height = 60
         self.image = pygame.Surface([self.width, self.height])
@@ -214,7 +212,6 @@ class Player(Entity):
         enemy_hit_list = pygame.sprite.spritecollide(self, self.level.enemy_list, False)
         if len(enemy_hit_list) > 0:
             self.health +=- 1
-            print self.health
 
         # Do walking animation
         pos = self.rect.x + self.level.world_shift
@@ -226,23 +223,21 @@ class Player(Entity):
             self.image = self.walking_frames_l[frame]
 
 
+
 class Weapon(Base_Entity):
     def __init__(self, player):
         """Superclass for all player weapons."""
         Base_Entity.__init__(self)
         self.player = player
+        self.fire_time = 0 # elapsed time between firing
+        self.state = 'firing'
+        self.reload_time = 100
 
-        # Image list - [0] facing right and [1] facing left
-        self.images = []
-        self.images.append(pygame.image.load("Resources/sprite_pistol.png").convert_alpha())
-        self.images.append(pygame.transform.flip(self.images[0], True, False)) # Flipped 
-        self.image = self.images[0]
-
-        self.rect = self.image.get_rect()
         self.direction = self.player.direction
         self.level = player.level
 
     def update(self):
+        # 
         self.rect.center = self.player.rect.center
         self.direction = self.player.direction
 
@@ -251,34 +246,97 @@ class Weapon(Base_Entity):
         else:
             self.image = self.images[1]
 
+        self.fire_time += 1
+
+
+class Pistol(Weapon):
+    """ fires a single bullet at a time, large amount of ammo"""
+    def __init__(self, player):
+        Weapon.__init__(self, player)
+        self.min_fire_time = 10 # minimum time required to shoot
+        self.clip_size = 6 # amount of ammo per clip
+        self.clip_ammo = 6
+        self.ammo_amount = 288 
+        self.reload_time = 100
+
+        # Image list - [0] facing right and [1] facing left
+        self.images = []
+        self.images.append(pygame.image.load("Resources/sprite_pistol.png").convert_alpha())
+        self.images.append(pygame.transform.flip(self.images[0], True, False)) # Flipped 
+        self.image = self.images[0]
+        self.rect = self.image.get_rect()
+
+    def use_weapon(self):
+        """Called when player presses the fire button - attempt to use weapon.
+        For pistols: reload whole magazine. """
+        if self.state == 'firing':
+            if self.fire_time >= self.min_fire_time:
+                if self.clip_ammo >= 1:
+                    self.clip_ammo +=- 1
+                    self.fire()
+                    self.fire_time = 0
+                else:
+                    print 'reloading'
+                    self.state == 'reloading'
+        elif self.state == 'reloading':
+            if self.fire_time >= self.reload_time:
+                self.clip_ammo = self.clip_size
+                self.state == 'firing'
+                self.ammo_amount +=- self.clip_size
+
+        print(self.state)
+
+
+
+
     def fire(self):
         """ attack with current weapon """
         bullet = Bullet(self.direction)
         bullet.rect.x = self.rect.x+(self.rect.width/2)
         bullet.rect.y = self.rect.y+(self.rect.height/2)
         bullet.level = self.level
-        return bullet
+        self.level.entity_list.add(bullet)
 
-class Pistol(Weapon):
-    def __init__(self, player):
-        Weapon.__init__(self, player)
 
 class Shotgun(Weapon):
+    """ fires 3 bullets at a time"""
     def __init__(self, player):
         Weapon.__init__(self, player)
+        self.images = []
+        self.images.append(pygame.image.load("Resources/sprite_shotgun.png").convert_alpha())
+        self.images.append(pygame.transform.flip(self.images[0], True, False)) # Flipped 
+        self.image = self.images[0]
+
+        self.min_fire_time = 50 # minimum time required to shoot
+        self.clip_size = 6 # amount of ammo per clip
+        self.ammo_amount = 54 # maximum starting ammo (all clips) in gun
+        self.reload_time = 100
+
+        self.rect = self.image.get_rect()
+
+
+    def fire(self):
+        """ Fire three bullets """
+        for _i in range(3):
+            bullet = Bullet(self.direction)
+            bullet.rect.x = self.rect.x+(self.rect.width/2)
+            bullet.rect.y = self.rect.y+(self.rect.height/2)+(10*_i)
+            bullet.level = self.level
+            self.level.entity_list.add(bullet)
+        self.fire_time = 0
 
 class MachineGun(Weapon):
+    """ fires burst of 3 bullets at a time"""
     def __init__(self, player):
         Weapon.__init__(self, player)
-
 
 class Bullet(Base_Entity):
     """
     TO DO: for now, just spawn bullets - in future handle bullet creation by weapon classes
     """
-    def __init__(self, dir):
+    def __init__(self, direction):
         Base_Entity.__init__(self)
-        self.direction = dir
+        self.direction = direction
         self.move_speed = 20
         self.max_time = 50
         self.alive_time = 0

@@ -30,7 +30,7 @@ boundary = 350
 right_boundary = SCREEN_WIDTH - boundary
 left_boundary = boundary
 
-WIN_CAPTION = "Zombie Game"
+WIN_CAPTION = "Really Cool Zombie Game"
 
 def terminate():
 	"""Terminate pygame, quit nicely"""

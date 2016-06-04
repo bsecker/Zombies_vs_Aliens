@@ -57,6 +57,8 @@ class Level:
         # Draw UI
         self.draw_healthbar(surface,self.player.health)
         self.draw_score(surface, self.score)
+        self.draw_ammo(surface)
+
 
     def shift_world(self, shift_x):
         """ When the user moves left/right scroll everything:"""
@@ -83,21 +85,29 @@ class Level:
         if random.randrange(0,int(self.zombie_chance)) == 1:
             self.zombie = self.add_zombie(random.choice([self.spawn1, self.spawn2]), 0) # Spawn at top of screen (zombies don't feel fall damage))
             self.zombie_chance +=- 0.5
-            print self.zombie_chance
 
     def draw_healthbar(self, surface, health):
+        """Draw player health as a rectangle"""
         _max_width = 100 # Width of healthbar
         pygame.draw.rect(surface, constants.RED, (50, 50, _max_width, 20))
         pygame.draw.rect(surface, constants.GREEN, (50, 50, self.player.health,20))
 
     def draw_score(self, surface, score):
-        """render score"""
+        """Render score"""
         score_text = self.font.render(str(int(score)), 1, constants.YELLOW)
         surface.blit(score_text, (constants.HALF_SCREEN_WIDTH, 50))
 
     def draw_fps(self, surface, fps):
-        fps_text = self.font.render(str(fps.get_fps()), 1, constants.YELLOW)
+        """Developer function to measure current FPS of program."""
+        fps_text = self.font.render(str(int(fps.get_fps())), 1, constants.YELLOW)
         surface.blit(fps_text, (constants.SCREEN_WIDTH-70, 50))
+
+    def draw_ammo(self, surface):
+        """draw player ammo"""
+        clip_text = self.font.render("{0}/{1}".format(str(self.player.current_weapon.clip_ammo),str(self.player.current_weapon.ammo_amount)), 1, constants.WHITE)
+        surface.blit(clip_text, (constants.SCREEN_WIDTH-70, 50))        
+
+
 
 
 class Level_01(Level):

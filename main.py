@@ -38,8 +38,9 @@ def main():
 
     while True:
 
+
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            if event.type == pygame.QUIT: 
                 constants.terminate()
 
             if event.type == pygame.KEYDOWN:
@@ -50,8 +51,7 @@ def main():
                 if event.key == pygame.K_SPACE:
                     player.jump() 
                 if event.key == pygame.K_z:
-                    bullet = player.current_weapon.fire()
-                    current_level.entity_list.add(bullet)
+                    player.current_weapon.use_weapon()
                 if event.key == pygame.K_ESCAPE:
                     constants.terminate()
  
@@ -80,7 +80,12 @@ def main():
                 current_level.shift_world(diff)     
         # Draw
         current_level.render(screen)
-        current_level.draw_fps(screen, FPSCLOCK)
+        
+        # Draw rentagles around player
+        # pygame.draw.rect(screen, constants.GREEN, player.rect, 1)
+        # pygame.draw.rect(screen, constants.RED, player.current_weapon.rect, 1)
+
+        #current_level.draw_fps(screen, FPSCLOCK)
 
         FPSCLOCK.tick(constants.FPS)
 

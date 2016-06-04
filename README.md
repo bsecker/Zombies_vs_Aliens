@@ -2,13 +2,12 @@
 DTG 300 Zombie Survival Game
 
 To do:
- - get sprite sheets working
- - take photos of stuff
  - limit amount of zombies in world
  - reload time
  - smooth movement
 Bugs
- - Weapon creation and player init is a mess.
+ - zombies stop spawning after a certain amount.
+ - giant lag spikes with lots of entities, even with none on screen. After a while
  
  
  
