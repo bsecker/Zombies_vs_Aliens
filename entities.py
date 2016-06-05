@@ -157,40 +157,40 @@ class Player(Entity):
         # Load all the right facing images into a list
         image = sprite_sheet.get_image(0, 0, 66, 90)
         self.walking_frames_r.append(image)
-        # image = sprite_sheet.get_image(66, 0, 66, 90)
-        # self.walking_frames_r.append(image)
-        # image = sprite_sheet.get_image(132, 0, 67, 90)
-        # self.walking_frames_r.append(image)
-        # image = sprite_sheet.get_image(0, 93, 66, 90)
-        # self.walking_frames_r.append(image)
-        # image = sprite_sheet.get_image(66, 93, 66, 90)
-        # self.walking_frames_r.append(image)
-        # image = sprite_sheet.get_image(132, 93, 72, 90)
-        # self.walking_frames_r.append(image)
-        # image = sprite_sheet.get_image(0, 186, 70, 90)
-        # self.walking_frames_r.append(image)
+        image = sprite_sheet.get_image(66, 0, 66, 90)
+        self.walking_frames_r.append(image)
+        image = sprite_sheet.get_image(132, 0, 67, 90)
+        self.walking_frames_r.append(image)
+        image = sprite_sheet.get_image(0, 93, 66, 90)
+        self.walking_frames_r.append(image)
+        image = sprite_sheet.get_image(66, 93, 66, 90)
+        self.walking_frames_r.append(image)
+        image = sprite_sheet.get_image(132, 93, 72, 90)
+        self.walking_frames_r.append(image)
+        image = sprite_sheet.get_image(0, 186, 70, 90)
+        self.walking_frames_r.append(image)
 
-        #  # Load all the right facing images, then flip them
-        # # to face left.
-        # image = sprite_sheet.get_image(0, 0, 66, 90)
-        # image = pygame.transform.flip(image, True, False)
-        # self.walking_frames_l.append(image)
-        # image = sprite_sheet.get_image(66, 0, 66, 90)
-        # image = pygame.transform.flip(image, True, False)
-        # self.walking_frames_l.append(image)
-        # image = sprite_sheet.get_image(132, 0, 67, 90)
-        # image = pygame.transform.flip(image, True, False)
-        # self.walking_frames_l.append(image)
-        # image = sprite_sheet.get_image(0, 93, 66, 90)
-        # image = pygame.transform.flip(image, True, False)
-        # self.walking_frames_l.append(image)
-        # image = sprite_sheet.get_image(66, 93, 66, 90)
-        # image = pygame.transform.flip(image, True, False)
-        # self.walking_frames_l.append(image)
-        # image = sprite_sheet.get_image(132, 93, 72, 90)
-        # image = pygame.transform.flip(image, True, False)
-        # self.walking_frames_l.append(image)
-        # image = sprite_sheet.get_image(0, 186, 70, 90)
+         # Load all the right facing images, then flip them
+        # to face left.
+        image = sprite_sheet.get_image(0, 0, 66, 90)
+        image = pygame.transform.flip(image, True, False)
+        self.walking_frames_l.append(image)
+        image = sprite_sheet.get_image(66, 0, 66, 90)
+        image = pygame.transform.flip(image, True, False)
+        self.walking_frames_l.append(image)
+        image = sprite_sheet.get_image(132, 0, 67, 90)
+        image = pygame.transform.flip(image, True, False)
+        self.walking_frames_l.append(image)
+        image = sprite_sheet.get_image(0, 93, 66, 90)
+        image = pygame.transform.flip(image, True, False)
+        self.walking_frames_l.append(image)
+        image = sprite_sheet.get_image(66, 93, 66, 90)
+        image = pygame.transform.flip(image, True, False)
+        self.walking_frames_l.append(image)
+        image = sprite_sheet.get_image(132, 93, 72, 90)
+        image = pygame.transform.flip(image, True, False)
+        self.walking_frames_l.append(image)
+        image = sprite_sheet.get_image(0, 186, 70, 90)
         image = pygame.transform.flip(image, True, False)
         self.walking_frames_l.append(image)
  
@@ -254,10 +254,10 @@ class Pistol(Weapon):
     """ fires a single bullet at a time, large amount of ammo"""
     def __init__(self, player):
         Weapon.__init__(self, player)
-        self.min_fire_time = 5 # minimum time required to shoot
+        self.min_fire_time = 8 # minimum time required to shoot
         self.clip_size = 10 # amount of ammo per clip
         self.clip_ammo = 10
-        self.ammo_amount = 30
+        self.ammo_amount = 300
         self.reload_time = 100
 
         # Image list - [0] facing right and [1] facing left

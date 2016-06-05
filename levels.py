@@ -86,7 +86,7 @@ class Level:
     def spawn_zombies(self):
         """Handles waves and zombie spawning"""
         if random.randrange(0,int(self.zombie_chance)) == 1:
-            self.zombie = self.add_zombie(random.choice([self.spawn1, self.spawn2]), 0) # Spawn at top of screen (zombies don't feel fall damage))
+            self.zombie = self.add_zombie(random.choice([self.spawn1, self.spawn2])+self.world_shift, 0) # Spawn at top of screen (zombies don't feel fall damage))
             self.zombie_chance +=- 0.5
 
     def draw_healthbar(self, surface, health):
@@ -108,7 +108,7 @@ class Level:
     def draw_ammo(self, surface):
         """draw player ammo"""
         clip_text = self.font.render("{0}/{1}".format(str(self.player.current_weapon.clip_ammo),str(self.player.current_weapon.ammo_amount)), 1, constants.WHITE)
-        surface.blit(clip_text, (constants.SCREEN_WIDTH-70, 50))        
+        surface.blit(clip_text, (constants.SCREEN_WIDTH-75, 50))        
 
 
 
@@ -122,7 +122,7 @@ class Level_01(Level):
         """create level"""
         Level.__init__(self, player)
 
-        self.level_limit = -1500
+        self.level_limit = -1600
         #self.background = pygame.image.load("background_01.png").convert()
         #self.background.set_colorkey(constants.WHITE)
         #draw background
@@ -185,8 +185,7 @@ class Level_01(Level):
             elif _y <= constants.SCREEN_HEIGHT-_bs:
                 level.append([blocks.DIRT_MIDDLE, _x, _y+(_bs*2)])
 
-            _x+= _bs
-            
+            _x+= _bs    
 
         print 'creating {0} blocks..'.format(len(level))
         return level
