@@ -7,7 +7,9 @@ import entities
 
 
 def main():
-    pygame.init()
+    pygame.mixer.pre_init(44100, -16, 1, 512)   
+    pygame.init()  
+    pygame.mixer.init()
 
     screen_size = (constants.SCREEN_WIDTH,constants.SCREEN_HEIGHT)
     screen = pygame.display.set_mode(screen_size, )#pygame.FULLSCREEN)
@@ -52,6 +54,9 @@ def main():
                     player.jump() 
                 if event.key == pygame.K_z:
                     player.current_weapon.use_weapon()
+                if event.key == pygame.K_r:
+                    # Reload weapon
+                    player.current_weapon.reload()
                 if event.key == pygame.K_ESCAPE:
                     constants.terminate()
  
@@ -85,7 +90,7 @@ def main():
         # pygame.draw.rect(screen, constants.GREEN, player.rect, 1)
         # pygame.draw.rect(screen, constants.RED, player.current_weapon.rect, 1)
 
-        #current_level.draw_fps(screen, FPSCLOCK)
+        current_level.draw_fps(screen, FPSCLOCK)
 
         FPSCLOCK.tick(constants.FPS)
 

@@ -30,7 +30,7 @@ class Block(pygame.sprite.Sprite):
             code. """
         pygame.sprite.Sprite.__init__(self)
  
-        sprite_sheet = SpriteSheet("tiles_spritesheet.png")
+        sprite_sheet = SpriteSheet("Resources/tiles_spritesheet.png")
         # Grab the image for this platform
         self.image = sprite_sheet.get_image(sprite_sheet_data[0],
                                             sprite_sheet_data[1],

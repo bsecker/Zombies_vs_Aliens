@@ -153,44 +153,44 @@ class Player(Entity):
         self.walking_frames_l = []
         self.walking_frames_r = []
 
-        sprite_sheet = SpriteSheet("p1_walk.png")
+        sprite_sheet = SpriteSheet("Resources/p1_walk.png")
         # Load all the right facing images into a list
         image = sprite_sheet.get_image(0, 0, 66, 90)
         self.walking_frames_r.append(image)
-        image = sprite_sheet.get_image(66, 0, 66, 90)
-        self.walking_frames_r.append(image)
-        image = sprite_sheet.get_image(132, 0, 67, 90)
-        self.walking_frames_r.append(image)
-        image = sprite_sheet.get_image(0, 93, 66, 90)
-        self.walking_frames_r.append(image)
-        image = sprite_sheet.get_image(66, 93, 66, 90)
-        self.walking_frames_r.append(image)
-        image = sprite_sheet.get_image(132, 93, 72, 90)
-        self.walking_frames_r.append(image)
-        image = sprite_sheet.get_image(0, 186, 70, 90)
-        self.walking_frames_r.append(image)
+        # image = sprite_sheet.get_image(66, 0, 66, 90)
+        # self.walking_frames_r.append(image)
+        # image = sprite_sheet.get_image(132, 0, 67, 90)
+        # self.walking_frames_r.append(image)
+        # image = sprite_sheet.get_image(0, 93, 66, 90)
+        # self.walking_frames_r.append(image)
+        # image = sprite_sheet.get_image(66, 93, 66, 90)
+        # self.walking_frames_r.append(image)
+        # image = sprite_sheet.get_image(132, 93, 72, 90)
+        # self.walking_frames_r.append(image)
+        # image = sprite_sheet.get_image(0, 186, 70, 90)
+        # self.walking_frames_r.append(image)
 
-         # Load all the right facing images, then flip them
-        # to face left.
-        image = sprite_sheet.get_image(0, 0, 66, 90)
-        image = pygame.transform.flip(image, True, False)
-        self.walking_frames_l.append(image)
-        image = sprite_sheet.get_image(66, 0, 66, 90)
-        image = pygame.transform.flip(image, True, False)
-        self.walking_frames_l.append(image)
-        image = sprite_sheet.get_image(132, 0, 67, 90)
-        image = pygame.transform.flip(image, True, False)
-        self.walking_frames_l.append(image)
-        image = sprite_sheet.get_image(0, 93, 66, 90)
-        image = pygame.transform.flip(image, True, False)
-        self.walking_frames_l.append(image)
-        image = sprite_sheet.get_image(66, 93, 66, 90)
-        image = pygame.transform.flip(image, True, False)
-        self.walking_frames_l.append(image)
-        image = sprite_sheet.get_image(132, 93, 72, 90)
-        image = pygame.transform.flip(image, True, False)
-        self.walking_frames_l.append(image)
-        image = sprite_sheet.get_image(0, 186, 70, 90)
+        #  # Load all the right facing images, then flip them
+        # # to face left.
+        # image = sprite_sheet.get_image(0, 0, 66, 90)
+        # image = pygame.transform.flip(image, True, False)
+        # self.walking_frames_l.append(image)
+        # image = sprite_sheet.get_image(66, 0, 66, 90)
+        # image = pygame.transform.flip(image, True, False)
+        # self.walking_frames_l.append(image)
+        # image = sprite_sheet.get_image(132, 0, 67, 90)
+        # image = pygame.transform.flip(image, True, False)
+        # self.walking_frames_l.append(image)
+        # image = sprite_sheet.get_image(0, 93, 66, 90)
+        # image = pygame.transform.flip(image, True, False)
+        # self.walking_frames_l.append(image)
+        # image = sprite_sheet.get_image(66, 93, 66, 90)
+        # image = pygame.transform.flip(image, True, False)
+        # self.walking_frames_l.append(image)
+        # image = sprite_sheet.get_image(132, 93, 72, 90)
+        # image = pygame.transform.flip(image, True, False)
+        # self.walking_frames_l.append(image)
+        # image = sprite_sheet.get_image(0, 186, 70, 90)
         image = pygame.transform.flip(image, True, False)
         self.walking_frames_l.append(image)
  
@@ -236,8 +236,9 @@ class Weapon(Base_Entity):
         self.direction = self.player.direction
         self.level = player.level
 
+        self.fire_sound = None
+
     def update(self):
-        # 
         self.rect.center = self.player.rect.center
         self.direction = self.player.direction
 
@@ -253,10 +254,10 @@ class Pistol(Weapon):
     """ fires a single bullet at a time, large amount of ammo"""
     def __init__(self, player):
         Weapon.__init__(self, player)
-        self.min_fire_time = 10 # minimum time required to shoot
-        self.clip_size = 6 # amount of ammo per clip
-        self.clip_ammo = 6
-        self.ammo_amount = 288 
+        self.min_fire_time = 5 # minimum time required to shoot
+        self.clip_size = 10 # amount of ammo per clip
+        self.clip_ammo = 10
+        self.ammo_amount = 30
         self.reload_time = 100
 
         # Image list - [0] facing right and [1] facing left
@@ -265,6 +266,31 @@ class Pistol(Weapon):
         self.images.append(pygame.transform.flip(self.images[0], True, False)) # Flipped 
         self.image = self.images[0]
         self.rect = self.image.get_rect()
+        self.fire_sound = pygame.mixer.Sound("Resources/pistol_fire.wav")
+        self.reload_sound = pygame.mixer.Sound("Resources/pistol_reload.wav")
+
+    def update(self):
+        # Reload weapon
+        if self.clip_ammo == 0:
+            self.state = 'reloading'
+
+        if self.state == 'reloading':
+            if self.fire_time == 1:
+                self.reload_sound.play()
+            if self.fire_time >= self.reload_time:
+                if self.ammo_amount > 0:
+                    self.clip_ammo = self.clip_size
+                    self.state = 'firing'
+                    self.ammo_amount +=- self.clip_size
+
+        # Do parent stuff 
+        Weapon.update(self)
+
+    def reload(self):
+        """Manually reload the weapon"""
+        self.state = 'reloading'
+        self.fire_time = 0
+
 
     def use_weapon(self):
         """Called when player presses the fire button - attempt to use weapon.
@@ -275,19 +301,6 @@ class Pistol(Weapon):
                     self.clip_ammo +=- 1
                     self.fire()
                     self.fire_time = 0
-                else:
-                    print 'reloading'
-                    self.state == 'reloading'
-        elif self.state == 'reloading':
-            if self.fire_time >= self.reload_time:
-                self.clip_ammo = self.clip_size
-                self.state == 'firing'
-                self.ammo_amount +=- self.clip_size
-
-        print(self.state)
-
-
-
 
     def fire(self):
         """ attack with current weapon """
@@ -296,6 +309,7 @@ class Pistol(Weapon):
         bullet.rect.y = self.rect.y+(self.rect.height/2)
         bullet.level = self.level
         self.level.entity_list.add(bullet)
+        self.fire_sound.play()
 
 
 class Shotgun(Weapon):
@@ -309,10 +323,42 @@ class Shotgun(Weapon):
 
         self.min_fire_time = 50 # minimum time required to shoot
         self.clip_size = 6 # amount of ammo per clip
-        self.ammo_amount = 54 # maximum starting ammo (all clips) in gun
-        self.reload_time = 100
+        self.clip_ammo = 6 # amount of ammo currently in clip
+        self.ammo_amount = 10 # maximum starting ammo (all clips) in gun
+        self.reload_time = 70 # minimum time it takes to reload
+        self.reload_x = 0 # how much it has reloaded
 
         self.rect = self.image.get_rect()
+        self.fire_sound = pygame.mixer.Sound("Resources/shotgun_fire.wav")
+        self.reload_sound = pygame.mixer.Sound("Resources/shotgun_reload.wav")
+
+    def update(self):
+        Weapon.update(self)
+        self.reload_x += 1
+
+        if self.reload_x >= self.reload_time:
+            if self.ammo_amount > 0:
+                if self.clip_ammo < self.clip_size:
+                    self.clip_ammo += 1
+                    self.reload_x = 0
+                    self.ammo_amount +=- 1
+                    self.reload_sound.play()
+
+    def reload(self):
+        """Shotgun's have auto reload - no need to reload."""
+        pass
+
+    def use_weapon(self):
+        """Called when player presses the fire button - attempt to use weapon.
+        For shotguns: incremental """
+        if self.fire_time > self.min_fire_time:
+            if self.clip_ammo >= 1:
+                self.clip_ammo +=- 1
+                self.fire()
+                self.fire_time = 0
+                self.reload_x = 0
+
+                self.fire_sound.play()
 
 
     def fire(self):
@@ -323,7 +369,8 @@ class Shotgun(Weapon):
             bullet.rect.y = self.rect.y+(self.rect.height/2)+(10*_i)
             bullet.level = self.level
             self.level.entity_list.add(bullet)
-        self.fire_time = 0
+
+
 
 class MachineGun(Weapon):
     """ fires burst of 3 bullets at a time"""

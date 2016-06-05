@@ -31,6 +31,9 @@ class Level:
         # Font
         self.font = pygame.font.SysFont(None, 36)
 
+
+
+
     def update(self):
         self.block_list.update()
         self.enemy_list.update()
@@ -100,7 +103,7 @@ class Level:
     def draw_fps(self, surface, fps):
         """Developer function to measure current FPS of program."""
         fps_text = self.font.render(str(int(fps.get_fps())), 1, constants.YELLOW)
-        surface.blit(fps_text, (constants.SCREEN_WIDTH-70, 50))
+        surface.blit(fps_text, (constants.SCREEN_WIDTH-70, 70))
 
     def draw_ammo(self, surface):
         """draw player ammo"""
