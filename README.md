@@ -8,11 +8,8 @@ To do:
 Bugs
  - zombies stop spawning after a certain amount.
  - giant lag spikes with lots of entities, even with none on screen. After a while
+ - zombies dont spawn at the edge of the map!
 
-
- 2: Shotgun
- 3: Machine Gun
- 5: sound!
 
  
  

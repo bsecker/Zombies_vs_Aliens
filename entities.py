@@ -1,6 +1,7 @@
 import pygame
 import constants
 import math
+import time
 
 from spritesheet_functions import SpriteSheet
 
@@ -249,6 +250,20 @@ class Weapon(Base_Entity):
 
         self.fire_time += 1
 
+class Machete(Weapon):
+    """Melee Weapon. Infinite Ammo, close range."""
+    def __init__(self, player):
+        Weapon.__init__(self, player)
+        self.min_fire_time = 5
+
+        self.images = []
+        self.images.append(pygame.image.load("Resources/sprite_machete.png").convert_alpha())
+        self.images.append(pygame.transform.flip(self.images[0], True, False)) # Flipped 
+        self.image = self.images[0]
+
+        self.rect = self.image.get_rect()
+        self.fire_sound = pygame.mixer.Sound("Resources/machete_fire.wav")
+
 
 class Pistol(Weapon):
     """ fires a single bullet at a time, large amount of ammo"""
@@ -370,13 +385,6 @@ class Shotgun(Weapon):
             bullet.level = self.level
             self.level.entity_list.add(bullet)
 
-
-
-class MachineGun(Weapon):
-    """ fires burst of 3 bullets at a time"""
-    def __init__(self, player):
-        Weapon.__init__(self, player)
-
 class Bullet(Base_Entity):
     """
     TO DO: for now, just spawn bullets - in future handle bullet creation by weapon classes
@@ -419,7 +427,6 @@ class Bullet(Base_Entity):
         # Collide with enemies
         enemy_hit_list = pygame.sprite.spritecollide(self, self.level.enemy_list, False)
         if len(enemy_hit_list) > 0:
-            # check if player
             self.kill()
             enemy_hit_list[0].health +=- 1
 

@@ -86,8 +86,9 @@ class Level:
     def spawn_zombies(self):
         """Handles waves and zombie spawning"""
         if random.randrange(0,int(self.zombie_chance)) == 1:
-            self.zombie = self.add_zombie(random.choice([self.spawn1, self.spawn2])+self.world_shift, 0) # Spawn at top of screen (zombies don't feel fall damage))
-            self.zombie_chance +=- 0.5
+            self.zombie = self.add_zombie(random.choice([self.spawn1, self.spawn2]), 0) # Spawn at top of screen (zombies don't feel fall damage))
+            if self.zombie_chance > 5:
+                self.zombie_chance +=- 0.5
 
     def draw_healthbar(self, surface, health):
         """Draw player health as a rectangle"""
@@ -122,7 +123,7 @@ class Level_01(Level):
         """create level"""
         Level.__init__(self, player)
 
-        self.level_limit = -1600
+        self.level_limit = -1570
         #self.background = pygame.image.load("background_01.png").convert()
         #self.background.set_colorkey(constants.WHITE)
         #draw background
@@ -185,7 +186,10 @@ class Level_01(Level):
             elif _y <= constants.SCREEN_HEIGHT-_bs:
                 level.append([blocks.DIRT_MIDDLE, _x, _y+(_bs*2)])
 
-            _x+= _bs    
+            _x+= _bs 
+
+        # Add a block to the end that the zombies can jump on
+        level.append([blocks.GRASS_MIDDLE, _x, constants.SCREEN_HEIGHT-_bs])   
 
         print 'creating {0} blocks..'.format(len(level))
         return level

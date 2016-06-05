@@ -40,7 +40,6 @@ def main():
 
     while True:
 
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT: 
                 constants.terminate()
@@ -65,6 +64,7 @@ def main():
                     player.stop()
                 if event.key == pygame.K_RIGHT and player.x_vel > 0:
                     player.stop()
+
 
         #update level
         current_level.update()
