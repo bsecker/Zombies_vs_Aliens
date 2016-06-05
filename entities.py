@@ -255,14 +255,67 @@ class Machete(Weapon):
     def __init__(self, player):
         Weapon.__init__(self, player)
         self.min_fire_time = 5
+        self.swinging = False
+        self.angle = 0 # sword angle
+        self.max_angle = -90
+        self.swing_speed = 10 # how fast the sword rotates
+        self.swing_dir = 'R'
+        self.clip_ammo = 1
+        self.ammo_amount = 1
 
         self.images = []
         self.images.append(pygame.image.load("Resources/sprite_machete.png").convert_alpha())
         self.images.append(pygame.transform.flip(self.images[0], True, False)) # Flipped 
         self.image = self.images[0]
-
         self.rect = self.image.get_rect()
+
         self.fire_sound = pygame.mixer.Sound("Resources/machete_fire.wav")
+
+    def update(self):
+        Weapon.update(self)
+
+        # Swing Sword
+        if self.swinging == True:
+            if self.swing_dir == 'R':
+                if self.angle >= self.max_angle:
+                    self.angle +=- self.swing_speed
+                    self.image = self.rot_center( self.image, self.angle)
+                else:
+                    self.swinging = False
+                    self.angle = 0
+
+            elif self.swing_dir == 'L':
+                if self.angle <= -self.max_angle:
+                    self.angle += self.swing_speed
+                    self.image = self.rot_center(self.image, self.angle)
+                else:
+                    self.swinging = False
+                    self.angle = 0
+
+            # Collide with enemies
+            enemy_hit_list = pygame.sprite.spritecollide(self, self.level.enemy_list, False)
+            if len(enemy_hit_list) > 0:
+                enemy_hit_list[0].health +=- 1
+
+
+
+
+    def rot_center(self, image, angle):
+        """rotate an image while keeping its center and size"""
+        orig_rect = image.get_rect()
+        rot_image = pygame.transform.rotate(image, angle)
+        rot_rect = orig_rect.copy()
+        rot_rect.center = rot_image.get_rect().center
+        rot_image = rot_image.subsurface(rot_rect).copy()
+        return rot_image
+
+    def use_weapon(self):
+        """Swing Sword"""
+        self.swinging = True
+
+        self.swing_dir = self.player.direction
+
+
 
 
 class Pistol(Weapon):

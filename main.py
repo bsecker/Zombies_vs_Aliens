@@ -32,7 +32,7 @@ def main():
     player.rect.x = constants.SCREEN_WIDTH/2
     player.rect.y = constants.SCREEN_HEIGHT - player.rect.height*2
     player.level = current_level
-    pistol = entities.Pistol(player)
+    pistol = entities.Machete(player)
     current_level.player_list.add(pistol)
     player.current_weapon = pistol
 
