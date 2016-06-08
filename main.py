@@ -32,19 +32,29 @@ def main():
     player.rect.x = constants.SCREEN_WIDTH/2
     player.rect.y = constants.SCREEN_HEIGHT - player.rect.height*2
     player.level = current_level
-    pistol = entities.Machete(player)
-    current_level.player_list.add(pistol)
+    pistol = entities.Pistol(player)
+    shotgun = entities.Shotgun(player)
+    machete = entities.Machete(player)
     player.current_weapon = pistol
+
+    # Spawn in ammo pack for shits and gigs
+    ammo_pack = entities.Ammopack(player)
+    ammo_pack.rect.y = constants.SCREEN_HEIGHT - player.rect.height*2
+    ammo_pack.rect.x = constants.SCREEN_WIDTH/2
+    current_level.entity_list.add(ammo_pack)
+
 
     FPSCLOCK = pygame.time.Clock()
 
     while True:
-
+        # Event Handling
         for event in pygame.event.get():
             if event.type == pygame.QUIT: 
                 constants.terminate()
 
             if event.type == pygame.KEYDOWN:
+
+                # Movement/Actions
                 if event.key == pygame.K_LEFT:
                     player.go_left()
                 if event.key == pygame.K_RIGHT:
@@ -54,8 +64,26 @@ def main():
                 if event.key == pygame.K_z:
                     player.current_weapon.use_weapon()
                 if event.key == pygame.K_r:
-                    # Reload weapon
                     player.current_weapon.reload()
+
+                # Change Weapon
+                if event.key == pygame.K_1:
+                    player.current_weapon = shotgun
+                    current_level.player_list.add(shotgun)
+                    current_level.player_list.remove(pistol)
+                    current_level.player_list.remove(machete)
+                if event.key == pygame.K_2:
+                    player.current_weapon = pistol
+                    current_level.player_list.add(pistol)
+                    current_level.player_list.remove(machete)
+                    current_level.player_list.remove(shotgun)
+                if event.key == pygame.K_3:
+                    player.current_weapon = machete
+                    current_level.player_list.add(machete)
+                    current_level.player_list.remove(pistol)
+                    current_level.player_list.remove(shotgun)         
+
+                # Quit Game
                 if event.key == pygame.K_ESCAPE:
                     constants.terminate()
  
@@ -64,7 +92,6 @@ def main():
                     player.stop()
                 if event.key == pygame.K_RIGHT and player.x_vel > 0:
                     player.stop()
-
 
         #update level
         current_level.update()
@@ -82,7 +109,7 @@ def main():
             diff = constants.left_boundary - player.rect.left
             player.rect.left = constants.left_boundary
             if current_position <= -current_level.level_limit:
-                current_level.shift_world(diff)     
+                current_level.shift_world(diff)    
         # Draw
         current_level.render(screen)
         

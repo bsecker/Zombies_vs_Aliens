@@ -2,6 +2,7 @@ import pygame
 import constants
 import math
 import time
+import random
 
 from spritesheet_functions import SpriteSheet
 
@@ -144,9 +145,7 @@ class Zombie(Entity):
 class Player(Entity):
     def __init__(self):
         Entity.__init__(self)
-        self.ammo = 100
         self.health = 100
-        self.rot = 0
 
         self.current_weapon = None
 
@@ -254,7 +253,7 @@ class Machete(Weapon):
     """Melee Weapon. Infinite Ammo, close range."""
     def __init__(self, player):
         Weapon.__init__(self, player)
-        self.min_fire_time = 5
+        self.min_fire_time = 50
         self.swinging = False
         self.angle = 0 # sword angle
         self.max_angle = -90
@@ -270,6 +269,7 @@ class Machete(Weapon):
         self.rect = self.image.get_rect()
 
         self.fire_sound = pygame.mixer.Sound("Resources/machete_fire.wav")
+        self.hit_sound = pygame.mixer.Sound("Resources/machete_hit.wav")
 
     def update(self):
         Weapon.update(self)
@@ -283,6 +283,7 @@ class Machete(Weapon):
                 else:
                     self.swinging = False
                     self.angle = 0
+                    self.fire_time = 0
 
             elif self.swing_dir == 'L':
                 if self.angle <= -self.max_angle:
@@ -291,13 +292,13 @@ class Machete(Weapon):
                 else:
                     self.swinging = False
                     self.angle = 0
+                    self.fire_time = 0
 
             # Collide with enemies
             enemy_hit_list = pygame.sprite.spritecollide(self, self.level.enemy_list, False)
             if len(enemy_hit_list) > 0:
-                enemy_hit_list[0].health +=- 1
-
-
+                enemy_hit_list[0].kill()
+                self.hit_sound.play()
 
 
     def rot_center(self, image, angle):
@@ -311,12 +312,11 @@ class Machete(Weapon):
 
     def use_weapon(self):
         """Swing Sword"""
-        self.swinging = True
+        if self.fire_time >= self.min_fire_time:
+            self.swinging = True
 
-        self.swing_dir = self.player.direction
-
-
-
+            self.swing_dir = self.player.direction
+            self.fire_sound.play()
 
 class Pistol(Weapon):
     """ fires a single bullet at a time, large amount of ammo"""
@@ -392,7 +392,7 @@ class Shotgun(Weapon):
         self.min_fire_time = 50 # minimum time required to shoot
         self.clip_size = 6 # amount of ammo per clip
         self.clip_ammo = 6 # amount of ammo currently in clip
-        self.ammo_amount = 10 # maximum starting ammo (all clips) in gun
+        self.ammo_amount = 100 # maximum starting ammo (all clips) in gun
         self.reload_time = 70 # minimum time it takes to reload
         self.reload_x = 0 # how much it has reloaded
 
@@ -439,11 +439,9 @@ class Shotgun(Weapon):
             self.level.entity_list.add(bullet)
 
 class Bullet(Base_Entity):
-    """
-    TO DO: for now, just spawn bullets - in future handle bullet creation by weapon classes
-    """
     def __init__(self, direction):
         Base_Entity.__init__(self)
+        self.entity_id = 'bullet' # Entity identifier
         self.direction = direction
         self.move_speed = 20
         self.max_time = 50
@@ -456,6 +454,10 @@ class Bullet(Base_Entity):
         self.rect = self.image.get_rect()
 
         self.level = None
+        self.hit_sound = random.choice([
+            pygame.mixer.Sound("Resources/bullet_hit.wav"),
+            pygame.mixer.Sound("Resources/bullet_hit2.wav")
+            ])
 
     def update(self):
         """Update Bullet"""
@@ -482,4 +484,12 @@ class Bullet(Base_Entity):
         if len(enemy_hit_list) > 0:
             self.kill()
             enemy_hit_list[0].health +=- 1
+            self.hit_sound.play()
 
+class Ammopack(Base_Entity):
+    def __init__(self, player):
+        Base_Entity.__init__(self)
+        self.player = player
+        self.entity_id = 'ammo'
+        self.image = pygame.image.load("Resources/sprite_ammopack.png").convert_alpha()
+        self.rect = self.image.get_rect()

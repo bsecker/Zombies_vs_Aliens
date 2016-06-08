@@ -74,6 +74,9 @@ class Level:
         for enemy in self.enemy_list:
             enemy.rect.x += shift_x
 
+        for entity in self.entity_list:
+            entity.rect.x += shift_x
+
     def add_zombie(self, x, y):
         #add zombie:
         zombie = entities.Zombie(self.player)
@@ -102,7 +105,7 @@ class Level:
         surface.blit(score_text, (constants.HALF_SCREEN_WIDTH, 50))
 
     def draw_fps(self, surface, fps):
-        """Developer function to measure current FPS of program."""
+        """Developer function to draw measure of current FPS of program."""
         fps_text = self.font.render(str(int(fps.get_fps())), 1, constants.YELLOW)
         surface.blit(fps_text, (constants.SCREEN_WIDTH-70, 70))
 
@@ -110,9 +113,6 @@ class Level:
         """draw player ammo"""
         clip_text = self.font.render("{0}/{1}".format(str(self.player.current_weapon.clip_ammo),str(self.player.current_weapon.ammo_amount)), 1, constants.WHITE)
         surface.blit(clip_text, (constants.SCREEN_WIDTH-75, 50))        
-
-
-
 
 class Level_01(Level):
     """
