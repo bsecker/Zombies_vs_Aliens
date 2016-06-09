@@ -42,6 +42,7 @@ def main():
 
     FPSCLOCK = pygame.time.Clock()
 
+
     while True:
         # Event Handling
         for event in pygame.event.get():
@@ -61,6 +62,8 @@ def main():
                     player.current_weapon.use_weapon()
                 if event.key == pygame.K_r:
                     player.current_weapon.reload()
+                if event.key == pygame.K_x:
+                    player.throw_grenade()
 
                 # Change Weapon
                 if event.key == pygame.K_1:
@@ -113,6 +116,7 @@ def main():
         # Draw rentagles around player
         # pygame.draw.rect(screen, constants.GREEN, player.rect, 1)
         # pygame.draw.rect(screen, constants.RED, player.current_weapon.rect, 1)
+
 
         current_level.draw_fps(screen, FPSCLOCK)
 

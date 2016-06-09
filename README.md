@@ -11,11 +11,10 @@ To do:
  - 'ammo drop coming in 3...2...1'
  - main menu
  - story??
- 
+
 
 
 Bugs
  - zombies stop spawning after a certain amount.
  - giant lag spikes with lots of entities, even with none on screen. After a while
  - zombies dont spawn at the edge of the map!
- - health bar goes less than 0.

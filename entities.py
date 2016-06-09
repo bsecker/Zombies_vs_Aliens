@@ -203,13 +203,14 @@ class Player(Entity):
         self.rect = self.image.get_rect()
 
         self.ammo_pickup_sound = pygame.mixer.Sound("Resources/Sounds/sound_ammo_pickup.wav")
-
+        self.grenade_throw_sound = pygame.mixer.Sound("Resources/Sounds/sound_grenade_throw.wav")
 
     def update(self):
         Entity.update(self)
 
         # health
         if self.health <= 0:
+            self.health = 0
             self.kill()
 
         # collide with zombies
@@ -234,10 +235,13 @@ class Player(Entity):
                 self.ammo_pickup_sound.play()
 
                 # Add score
-                if self.health < 100:
-                    self.health += 25
-                else:
+                self.health += 25
+                if self.health > 100: # limit to 100
                     self.health == 100
+
+            elif entity_hit_list[0].entity_id == 'grenade':
+                if entity_hit_list[0].exploding == True:
+                    self.health +=- 25
 
         # Do walking animation
         pos = self.rect.x + self.level.world_shift
@@ -252,6 +256,16 @@ class Player(Entity):
         """ Add ammo to all weapons (apart from sword)"""
         self.weapon_list[0].ammo_amount += 12
         self.weapon_list[1].ammo_amount += 20 
+
+    def throw_grenade(self):
+        """ Throw a grenade """
+        grenade = Grenade(self.direction)
+        grenade.rect.x = self.rect.x+(self.rect.width/2)
+        grenade.rect.y = self.rect.y
+        grenade.level = self.level
+        self.level.entity_list.add(grenade)
+        self.grenade_throw_sound.play()
+
 
 class Weapon(Base_Entity):
     def __init__(self, player):
@@ -519,8 +533,70 @@ class Bullet(Base_Entity):
             enemy_hit_list[0].health +=- 1
             self.hit_sound.play()
 
-class Grenade(Base_Entity):
-    """ Special attack that damages alot of enemies"""
+class Grenade(Entity):
+    """ Special attack that damages alot of enemies. 
+    inherit from Entity as it is affected by gravity """
+    def __init__(self, direction):
+        Entity.__init__(self)
+        self.move_speed = 10
+        self.entity_id = 'grenade'
+        self.direction = direction
+        self.fire_time = 0
+        self.explode_time = 100 # time until exploded
+        self.explode_radius = 100 # explode radius
+        self.exploding = False
+
+        self.image = pygame.image.load("Resources/Sprites/sprite_grenade.png")
+        self.rect = self.image.get_rect()
+
+        if self.direction == 'L':
+            self.x_vel = -self.move_speed
+        else:
+            self.x_vel = self.move_speed
+
+        self.explode_sound = pygame.mixer.Sound("Resources/Sounds/sound_grenade_explode.wav")
+
+    def update(self):
+        Entity.update(self)
+        self.fire_time += 1
+
+        # slow down if landed
+        self.rect.y += 1
+        block_hit_list = pygame.sprite.spritecollide(self, self.level.block_list, False)
+        self.rect.y +=- 1
+        if len(block_hit_list) > 0:
+            if self.direction == 'R':
+                if self.x_vel > 0:
+                    self.x_vel +=- 1
+            else:
+                if self.x_vel < 0:
+                    self.x_vel += 1
+
+        # explode
+        if self.fire_time >= self.explode_time:
+            self.exploding = True
+            self.explode()
+
+    def explode(self):
+        """ Detonate """
+        self.explode_sound.play()
+        
+        # kill enemies in a radius
+
+        # increase rect size
+        self.rect.x +=- self.explode_radius
+        self.rect.width += self.explode_radius*2
+        self.rect.y +=- self.explode_radius
+        self.rect.height += self.explode_radius*2
+
+
+        #hit enemies
+        enemy_hit_list  = pygame.sprite.spritecollide(self, self.level.enemy_list, False)
+        for enemy in enemy_hit_list:
+            enemy.kill()
+
+        self.kill()
+
 
 class Ammopack(Base_Entity):
     """ Pickup - entity that drops from the sky and gives the player ammo."""
@@ -541,6 +617,7 @@ class Ammopack(Base_Entity):
 
         # collide with objects
         block_hit_list = pygame.sprite.spritecollide(self, self.level.block_list, False)
+
         for block in block_hit_list:
             # Reset our position based on the top/bottom of the object.
             if self.y_vel > 0:
