@@ -120,7 +120,8 @@ class Level:
         """Draw player health as a rectangle"""
         _max_width = 100 # Width of healthbar
         pygame.draw.rect(surface, constants.RED, (50, 50, _max_width, 20))
-        pygame.draw.rect(surface, constants.GREEN, (50, 50, self.player.health,20))
+        if self.player.health > 0:
+            pygame.draw.rect(surface, constants.GREEN, (50, 50, self.player.health,20))
 
     def draw_score(self, surface, score):
         """Render score"""
@@ -135,7 +136,10 @@ class Level:
     def draw_ammo(self, surface):
         """draw player ammo"""
         clip_text = self.font.render("{0}/{1}".format(str(self.player.current_weapon.clip_ammo),str(self.player.current_weapon.ammo_amount)), 1, constants.WHITE)
-        surface.blit(clip_text, (constants.SCREEN_WIDTH-75, 50))        
+        surface.blit(clip_text, (constants.SCREEN_WIDTH-75, 50))   
+
+        grenades_text = self.font.render(str(self.player.grenades), 1, constants.WHITE)
+        surface.blit(grenades_text, (constants.SCREEN_WIDTH-75, 70))      
 
 class Level_01(Level):
     """

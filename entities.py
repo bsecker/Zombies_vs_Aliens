@@ -150,6 +150,7 @@ class Player(Entity):
         # Weapons
         self.weapon_list = None
         self.current_weapon = None
+        self.grenades = 3
 
         # Frames of animated walking left/right
         self.walking_frames_l = []
@@ -237,11 +238,7 @@ class Player(Entity):
                 # Add score
                 self.health += 25
                 if self.health > 100: # limit to 100
-                    self.health == 100
-
-            elif entity_hit_list[0].entity_id == 'grenade':
-                if entity_hit_list[0].exploding == True:
-                    self.health +=- 25
+                    self.health = 100
 
         # Do walking animation
         pos = self.rect.x + self.level.world_shift
@@ -255,16 +252,19 @@ class Player(Entity):
     def get_ammo_pack(self):
         """ Add ammo to all weapons (apart from sword)"""
         self.weapon_list[0].ammo_amount += 12
-        self.weapon_list[1].ammo_amount += 20 
+        self.weapon_list[1].ammo_amount += 20
+        self.grenades += 2
 
     def throw_grenade(self):
         """ Throw a grenade """
-        grenade = Grenade(self.direction)
-        grenade.rect.x = self.rect.x+(self.rect.width/2)
-        grenade.rect.y = self.rect.y
-        grenade.level = self.level
-        self.level.entity_list.add(grenade)
-        self.grenade_throw_sound.play()
+        if self.grenades > 0:
+            grenade = Grenade(self.direction)
+            grenade.rect.x = self.rect.x+(self.rect.width/2)
+            grenade.rect.y = self.rect.y
+            grenade.level = self.level
+            self.level.entity_list.add(grenade)
+            self.grenade_throw_sound.play()
+            self.grenades +=- 1
 
 
 class Weapon(Base_Entity):
@@ -475,7 +475,6 @@ class Shotgun(Weapon):
 
                 self.fire_sound.play()
 
-
     def fire(self):
         """ Fire three bullets """
         for _i in range(3):
@@ -544,7 +543,6 @@ class Grenade(Entity):
         self.fire_time = 0
         self.explode_time = 100 # time until exploded
         self.explode_radius = 100 # explode radius
-        self.exploding = False
 
         self.image = pygame.image.load("Resources/Sprites/sprite_grenade.png")
         self.rect = self.image.get_rect()
@@ -574,13 +572,14 @@ class Grenade(Entity):
 
         # explode
         if self.fire_time >= self.explode_time:
-            self.exploding = True
             self.explode()
+            self.kill() 
+
 
     def explode(self):
         """ Detonate """
         self.explode_sound.play()
-        
+
         # kill enemies in a radius
 
         # increase rect size
@@ -589,13 +588,15 @@ class Grenade(Entity):
         self.rect.y +=- self.explode_radius
         self.rect.height += self.explode_radius*2
 
-
-        #hit enemies
+        # hit enemies
         enemy_hit_list  = pygame.sprite.spritecollide(self, self.level.enemy_list, False)
         for enemy in enemy_hit_list:
             enemy.kill()
 
-        self.kill()
+        # hit player
+        player_hit_list = pygame.sprite.spritecollide(self, self.level.player_list, False)
+        if self.level.player in player_hit_list:
+            self.level.player.health +=- 50
 
 
 class Ammopack(Base_Entity):

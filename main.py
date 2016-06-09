@@ -48,7 +48,7 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT: 
                 constants.terminate()
-
+ 
             if event.type == pygame.KEYDOWN:
 
                 # Movement/Actions
@@ -118,7 +118,7 @@ def main():
         # pygame.draw.rect(screen, constants.RED, player.current_weapon.rect, 1)
 
 
-        current_level.draw_fps(screen, FPSCLOCK)
+        #current_level.draw_fps(screen, FPSCLOCK)
 
         FPSCLOCK.tick(constants.FPS)
 
