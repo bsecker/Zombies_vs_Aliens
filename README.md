@@ -3,8 +3,11 @@ DTG 300 Zombie Survival Game
 
 To do:
  - limit amount of zombies in world
- - reload time
- - smooth movement
+ - sprites
+ - backgrounds, art, misc stuff
+ - optimise code
+ - grenades
+
 
 Bugs
  - zombies stop spawning after a certain amount.

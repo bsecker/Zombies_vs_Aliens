@@ -32,17 +32,13 @@ def main():
     player.rect.x = constants.SCREEN_WIDTH/2
     player.rect.y = constants.SCREEN_HEIGHT - player.rect.height*2
     player.level = current_level
+
     pistol = entities.Pistol(player)
     shotgun = entities.Shotgun(player)
     machete = entities.Machete(player)
-    player.current_weapon = pistol
-
-    # Spawn in ammo pack for shits and gigs
-    ammo_pack = entities.Ammopack(player)
-    ammo_pack.rect.y = constants.SCREEN_HEIGHT - player.rect.height*2
-    ammo_pack.rect.x = constants.SCREEN_WIDTH/2
-    current_level.entity_list.add(ammo_pack)
-
+    player.weapon_list = [shotgun, pistol, machete]
+    player.current_weapon = shotgun
+    current_level.player_list. add(shotgun)
 
     FPSCLOCK = pygame.time.Clock()
 
@@ -97,6 +93,7 @@ def main():
         current_level.update()
 
         current_position = player.rect.x + current_level.world_shift
+
         # Shift the world if the player is near the boundary
         if player.rect.right >= constants.right_boundary:
             diff = player.rect.right - constants.right_boundary

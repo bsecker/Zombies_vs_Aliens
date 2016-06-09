@@ -25,14 +25,15 @@ class Level:
         self.spawn2 = None
         self.zombie_chance = 150
 
+        # Pickup
+        self.pickup_spawn_time = 0
+        self.pickup_spawn_min = 100
+
         # Score
         self.score = 0
 
         # Font
         self.font = pygame.font.SysFont(None, 36)
-
-
-
 
     def update(self):
         self.block_list.update()
@@ -41,6 +42,7 @@ class Level:
         self.player_list.update()
 
         self.spawn_zombies()
+        self.spawn_pickups()
 
         # Increment score as long as player is alive
         if self.player.alive == True:
@@ -92,6 +94,24 @@ class Level:
             self.zombie = self.add_zombie(random.choice([self.spawn1, self.spawn2]), 0) # Spawn at top of screen (zombies don't feel fall damage))
             if self.zombie_chance > 5:
                 self.zombie_chance +=- 0.5
+
+    def spawn_pickups(self):
+        """handles ammo and healthpack drops. They drop from the sky, like in Worms"""
+        self.pickup_spawn_time += 1
+
+        if self.pickup_spawn_time >= self.pickup_spawn_min:
+            # Spawn a pickup
+            print('Pack dropped!')
+            pickup = random.choice([entities.Ammopack(self.player),entities.Healthpack(self.player)])
+            pickup.rect.x = random.randint(-1000, 1000)
+            pickup.rect.y = 0
+            self.entity_list.add(pickup)
+
+            #reset time and make longer as time goes on
+            self.pickup_spawn_time = 0
+            #self.pickup_spawn_min += random.randrange(0, 300)
+            print("new spawn time:{0}".format(str(self.pickup_spawn_min)))
+
 
     def draw_healthbar(self, surface, health):
         """Draw player health as a rectangle"""
@@ -146,6 +166,7 @@ class Level_01(Level):
         #           [blocks.STONE_PLATFORM_RIGHT, 1260, 280],
         #           ]
         level = self.generate_random_level(3500)
+
         self.spawn1 = -2000
         self.spawn2 = 2000
  
@@ -189,7 +210,10 @@ class Level_01(Level):
             _x+= _bs 
 
         # Add a block to the end that the zombies can jump on
-        level.append([blocks.GRASS_MIDDLE, _x, constants.SCREEN_HEIGHT-_bs])   
+        level.append([blocks.GRASS_MIDDLE, _x, constants.SCREEN_HEIGHT-_bs]) 
+
+        
+
 
         print 'creating {0} blocks..'.format(len(level))
         return level

@@ -69,7 +69,7 @@ class Entity(Base_Entity):
         if self.y_vel <= self.max_gravity:
             self.y_vel += self.gravity_accel
  
-        # See if we are on the ground.
+        # Prevent going off the bottom of the screen.
         if self.rect.y >= constants.SCREEN_HEIGHT - self.rect.height and self.y_vel >= 0:
             self.y_vel = 0
             self.rect.y = constants.SCREEN_HEIGHT - self.rect.height
@@ -147,6 +147,8 @@ class Player(Entity):
         Entity.__init__(self)
         self.health = 100
 
+        # Weapons
+        self.weapon_list = None
         self.current_weapon = None
 
         # Frames of animated walking left/right
@@ -213,6 +215,26 @@ class Player(Entity):
         if len(enemy_hit_list) > 0:
             self.health +=- 1
 
+        # collide with entities
+        entity_hit_list = pygame.sprite.spritecollide(self, self.level.entity_list, False)
+        if len(entity_hit_list) > 0:
+            if entity_hit_list[0].entity_id == 'ammopack':
+                entity_hit_list[0].kill()
+                self.level.score += 10
+
+                #add ammo to all guns
+                self.get_ammo_pack()
+
+            elif entity_hit_list[0].entity_id == 'healthpack':
+                entity_hit_list[0].kill()
+                self.level.score += 15
+
+                # Add score
+                if self.health < 100:
+                    self.health += 25
+                else:
+                    self.health == 100
+
         # Do walking animation
         pos = self.rect.x + self.level.world_shift
         if self.direction == "R":
@@ -222,7 +244,10 @@ class Player(Entity):
             frame = (pos // 30) % len(self.walking_frames_l)
             self.image = self.walking_frames_l[frame]
 
-
+    def get_ammo_pack(self):
+        """ Add ammo to all weapons (apart from sword)"""
+        self.weapon_list[0].ammo_amount += 12
+        self.weapon_list[1].ammo_amount += 20 
 
 class Weapon(Base_Entity):
     def __init__(self, player):
@@ -325,7 +350,7 @@ class Pistol(Weapon):
         self.min_fire_time = 8 # minimum time required to shoot
         self.clip_size = 10 # amount of ammo per clip
         self.clip_ammo = 10
-        self.ammo_amount = 300
+        self.ammo_amount = 100
         self.reload_time = 100
 
         # Image list - [0] facing right and [1] facing left
@@ -392,7 +417,7 @@ class Shotgun(Weapon):
         self.min_fire_time = 50 # minimum time required to shoot
         self.clip_size = 6 # amount of ammo per clip
         self.clip_ammo = 6 # amount of ammo currently in clip
-        self.ammo_amount = 100 # maximum starting ammo (all clips) in gun
+        self.ammo_amount = 20 # maximum starting ammo (all clips) in gun
         self.reload_time = 70 # minimum time it takes to reload
         self.reload_x = 0 # how much it has reloaded
 
@@ -490,6 +515,37 @@ class Ammopack(Base_Entity):
     def __init__(self, player):
         Base_Entity.__init__(self)
         self.player = player
-        self.entity_id = 'ammo'
+        self.level = self.player.level
+        self.entity_id = 'ammopack'
         self.image = pygame.image.load("Resources/sprite_ammopack.png").convert_alpha()
+        self.image = pygame.transform.scale2x(self.image)
         self.rect = self.image.get_rect()
+        self.y_vel = 3 # How fast ammo pack drops
+        self.current_pos = self.level.world_shift
+
+    def update(self):
+        #move up/down
+        self.rect.y += self.y_vel
+
+        # collide with objects
+        block_hit_list = pygame.sprite.spritecollide(self, self.level.block_list, False)
+        for block in block_hit_list:
+            # Reset our position based on the top/bottom of the object.
+            if self.y_vel > 0:
+                self.rect.bottom = block.rect.top
+            # Stop our vertical movement
+            self.y_vel = 0
+
+        # check outside world (dev
+
+        if (self.current_pos <= self.level.level_limit) or (self.current_pos >= -self.level.level_limit):
+            print 'OUTSIDE LIMIT!!', self.current_pos
+            self.kill()
+
+
+class Healthpack(Ammopack):
+    """A different type of ammo pack - gives health instead."""
+    def __init__(self, player):
+        Ammopack.__init__(self, player)
+        self.entity_id = 'healthpack'
+        self.image = pygame.image.load("Resources/sprite_healthpack.png").convert_alpha()
