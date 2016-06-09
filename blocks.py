@@ -30,7 +30,7 @@ class Block(pygame.sprite.Sprite):
             code. """
         pygame.sprite.Sprite.__init__(self)
  
-        sprite_sheet = SpriteSheet("Resources/tiles_spritesheet.png")
+        sprite_sheet = SpriteSheet("Resources/Sprites/tiles_spritesheet.png")
         # Grab the image for this platform
         self.image = sprite_sheet.get_image(sprite_sheet_data[0],
                                             sprite_sheet_data[1],
@@ -39,3 +39,7 @@ class Block(pygame.sprite.Sprite):
  
         self.rect = self.image.get_rect()
 
+class PickupSpawnerBlock(Block):
+    """ Block where pickups drop to"""
+    def __init__(self):
+        Block.__init__(self, STONE_PLATFORM_MIDDLE)

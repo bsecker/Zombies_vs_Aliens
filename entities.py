@@ -155,7 +155,7 @@ class Player(Entity):
         self.walking_frames_l = []
         self.walking_frames_r = []
 
-        sprite_sheet = SpriteSheet("Resources/p1_walk.png")
+        sprite_sheet = SpriteSheet("Resources/Sprites/p1_walk.png")
         # Load all the right facing images into a list
         image = sprite_sheet.get_image(0, 0, 66, 90)
         self.walking_frames_r.append(image)
@@ -202,6 +202,8 @@ class Player(Entity):
         # Set a reference to the image rect.
         self.rect = self.image.get_rect()
 
+        self.ammo_pickup_sound = pygame.mixer.Sound("Resources/Sounds/sound_ammo_pickup.wav")
+
 
     def update(self):
         Entity.update(self)
@@ -221,6 +223,7 @@ class Player(Entity):
             if entity_hit_list[0].entity_id == 'ammopack':
                 entity_hit_list[0].kill()
                 self.level.score += 10
+                self.ammo_pickup_sound.play()
 
                 #add ammo to all guns
                 self.get_ammo_pack()
@@ -228,6 +231,7 @@ class Player(Entity):
             elif entity_hit_list[0].entity_id == 'healthpack':
                 entity_hit_list[0].kill()
                 self.level.score += 15
+                self.ammo_pickup_sound.play()
 
                 # Add score
                 if self.health < 100:
@@ -288,13 +292,13 @@ class Machete(Weapon):
         self.ammo_amount = 1
 
         self.images = []
-        self.images.append(pygame.image.load("Resources/sprite_machete.png").convert_alpha())
+        self.images.append(pygame.image.load("Resources/Sprites/sprite_machete.png").convert_alpha())
         self.images.append(pygame.transform.flip(self.images[0], True, False)) # Flipped 
         self.image = self.images[0]
         self.rect = self.image.get_rect()
 
-        self.fire_sound = pygame.mixer.Sound("Resources/machete_fire.wav")
-        self.hit_sound = pygame.mixer.Sound("Resources/machete_hit.wav")
+        self.fire_sound = pygame.mixer.Sound("Resources/Sounds/sound_machete_fire.wav")
+        self.hit_sound = pygame.mixer.Sound("Resources/Sounds/sound_machete_hit.wav")
 
     def update(self):
         Weapon.update(self)
@@ -343,6 +347,10 @@ class Machete(Weapon):
             self.swing_dir = self.player.direction
             self.fire_sound.play()
 
+    def reload(self):
+        """ no need to reload."""
+        pass
+
 class Pistol(Weapon):
     """ fires a single bullet at a time, large amount of ammo"""
     def __init__(self, player):
@@ -355,12 +363,12 @@ class Pistol(Weapon):
 
         # Image list - [0] facing right and [1] facing left
         self.images = []
-        self.images.append(pygame.image.load("Resources/sprite_pistol.png").convert_alpha())
+        self.images.append(pygame.image.load("Resources/Sprites/sprite_pistol.png").convert_alpha())
         self.images.append(pygame.transform.flip(self.images[0], True, False)) # Flipped 
         self.image = self.images[0]
         self.rect = self.image.get_rect()
-        self.fire_sound = pygame.mixer.Sound("Resources/pistol_fire.wav")
-        self.reload_sound = pygame.mixer.Sound("Resources/pistol_reload.wav")
+        self.fire_sound = pygame.mixer.Sound("Resources/Sounds/sound_pistol_fire.wav")
+        self.reload_sound = pygame.mixer.Sound("Resources/Sounds/sound_pistol_reload.wav")
 
     def update(self):
         # Reload weapon
@@ -410,7 +418,7 @@ class Shotgun(Weapon):
     def __init__(self, player):
         Weapon.__init__(self, player)
         self.images = []
-        self.images.append(pygame.image.load("Resources/sprite_shotgun.png").convert_alpha())
+        self.images.append(pygame.image.load("Resources/Sprites/sprite_shotgun.png").convert_alpha())
         self.images.append(pygame.transform.flip(self.images[0], True, False)) # Flipped 
         self.image = self.images[0]
 
@@ -422,8 +430,8 @@ class Shotgun(Weapon):
         self.reload_x = 0 # how much it has reloaded
 
         self.rect = self.image.get_rect()
-        self.fire_sound = pygame.mixer.Sound("Resources/shotgun_fire.wav")
-        self.reload_sound = pygame.mixer.Sound("Resources/shotgun_reload.wav")
+        self.fire_sound = pygame.mixer.Sound("Resources/Sounds/sound_shotgun_fire.wav")
+        self.reload_sound = pygame.mixer.Sound("Resources/Sounds/sound_shotgun_reload.wav")
 
     def update(self):
         Weapon.update(self)
@@ -480,8 +488,8 @@ class Bullet(Base_Entity):
 
         self.level = None
         self.hit_sound = random.choice([
-            pygame.mixer.Sound("Resources/bullet_hit.wav"),
-            pygame.mixer.Sound("Resources/bullet_hit2.wav")
+            pygame.mixer.Sound("Resources/Sounds/sound_bullet_hit.wav"),
+            pygame.mixer.Sound("Resources/Sounds/sound_bullet_hit2.wav")
             ])
 
     def update(self):
@@ -511,13 +519,17 @@ class Bullet(Base_Entity):
             enemy_hit_list[0].health +=- 1
             self.hit_sound.play()
 
+class Grenade(Base_Entity):
+    """ Special attack that damages alot of enemies"""
+
 class Ammopack(Base_Entity):
+    """ Pickup - entity that drops from the sky and gives the player ammo."""
     def __init__(self, player):
         Base_Entity.__init__(self)
         self.player = player
         self.level = self.player.level
         self.entity_id = 'ammopack'
-        self.image = pygame.image.load("Resources/sprite_ammopack.png").convert_alpha()
+        self.image = pygame.image.load("Resources/Sprites/sprite_ammopack.png").convert_alpha()
         self.image = pygame.transform.scale2x(self.image)
         self.rect = self.image.get_rect()
         self.y_vel = 3 # How fast ammo pack drops
@@ -536,16 +548,10 @@ class Ammopack(Base_Entity):
             # Stop our vertical movement
             self.y_vel = 0
 
-        # check outside world (dev
-
-        if (self.current_pos <= self.level.level_limit) or (self.current_pos >= -self.level.level_limit):
-            print 'OUTSIDE LIMIT!!', self.current_pos
-            self.kill()
-
-
 class Healthpack(Ammopack):
     """A different type of ammo pack - gives health instead."""
     def __init__(self, player):
         Ammopack.__init__(self, player)
         self.entity_id = 'healthpack'
-        self.image = pygame.image.load("Resources/sprite_healthpack.png").convert_alpha()
+        self.image = pygame.image.load("Resources/Sprites/sprite_healthpack.png").convert_alpha()
+        self.rect = self.image.get_rect()

@@ -7,6 +7,11 @@ To do:
  - backgrounds, art, misc stuff
  - optimise code
  - grenades
+ - world gen - add side blocks
+ - 'ammo drop coming in 3...2...1'
+ - main menu
+ - story??
+ 
 
 
 Bugs

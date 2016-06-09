@@ -27,7 +27,8 @@ class Level:
 
         # Pickup
         self.pickup_spawn_time = 0
-        self.pickup_spawn_min = 100
+        self.pickup_spawn_min = 1000
+        self.pickup_spawn_loc = None
 
         # Score
         self.score = 0
@@ -79,6 +80,8 @@ class Level:
         for entity in self.entity_list:
             entity.rect.x += shift_x
 
+        self.pickup_spawn_loc += shift_x
+
     def add_zombie(self, x, y):
         #add zombie:
         zombie = entities.Zombie(self.player)
@@ -103,13 +106,13 @@ class Level:
             # Spawn a pickup
             print('Pack dropped!')
             pickup = random.choice([entities.Ammopack(self.player),entities.Healthpack(self.player)])
-            pickup.rect.x = random.randint(-1000, 1000)
+            pickup.rect.x = self.pickup_spawn_loc
             pickup.rect.y = 0
             self.entity_list.add(pickup)
 
             #reset time and make longer as time goes on
             self.pickup_spawn_time = 0
-            #self.pickup_spawn_min += random.randrange(0, 300)
+            self.pickup_spawn_min += random.randrange(150, 200)
             print("new spawn time:{0}".format(str(self.pickup_spawn_min)))
 
 
@@ -144,6 +147,9 @@ class Level_01(Level):
         Level.__init__(self, player)
 
         self.level_limit = -1570
+        self.spawn1 = -2000
+        self.spawn2 = 2000
+
         #self.background = pygame.image.load("background_01.png").convert()
         #self.background.set_colorkey(constants.WHITE)
         #draw background
@@ -166,16 +172,27 @@ class Level_01(Level):
         #           [blocks.STONE_PLATFORM_RIGHT, 1260, 280],
         #           ]
         level = self.generate_random_level(3500)
-
-        self.spawn1 = -2000
-        self.spawn2 = 2000
  
-        # Go through the array above and add blocks
+        ### Go through the array above and add blocks:
+        ### TO DO: REDO THIS FOR MISC ITEMS (TREES ETC)
+
+        # get list of grass blocks and choose two 
+        #_grass_list = [_i for _i in level if _i[0] == blocks.GRASS_MIDDLE]
+        #_sample = random.sample(_grass_list, 2)
+
         for _block in level:
-            block = blocks.Block(_block[0])
+            # Change two grass blocks into spawn tiles for pickups
+            #if _block in _sample:
+            #    block = blocks.Block(blocks.STONE_PLATFORM_MIDDLE)
+            #else:
+            # If block is a spawnblock
+            if _block[0] == blocks.STONE_PLATFORM_LEFT:
+                block = blocks.PickupSpawnerBlock()
+                self.pickup_spawn_loc = _block[1] 
+            else:
+                block = blocks.Block(_block[0])
             block.rect.x = _block[1]
             block.rect.y = _block[2]
-            block.player = self.player
             self.block_list.add(block)
 
     def generate_random_level(self, size):
@@ -200,12 +217,16 @@ class Level_01(Level):
 
             level.append([blocks.GRASS_MIDDLE, _x, _y])
 
-            #add blocks underneath
+            # Add blocks underneath
             if _y <= constants.SCREEN_HEIGHT-(_bs*2):
                 level.append([blocks.DIRT_MIDDLE, _x, _y+_bs])
                 level.append([blocks.DIRT_MIDDLE, _x, _y+_bs*2])
             elif _y <= constants.SCREEN_HEIGHT-_bs:
                 level.append([blocks.DIRT_MIDDLE, _x, _y+(_bs*2)])
+
+            # Add ammo drop point
+            if _x == 700:
+                level.append([blocks.STONE_PLATFORM_LEFT, _x, _y]) 
 
             _x+= _bs 
 
