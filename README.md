@@ -8,7 +8,9 @@ To do:
  - main menu
  - story??
  - balancing
-
+ - high score
+ - player death
+ - high score message, warning: incoming zombie horde message
 
 
 Bugs

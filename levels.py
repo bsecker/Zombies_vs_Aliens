@@ -37,6 +37,7 @@ class Level:
 
         # Score
         self.score = 0
+        self.score_file = open("data.dat", 'w+')
 
         # Font
         self.font = pygame.font.SysFont(None, 36)

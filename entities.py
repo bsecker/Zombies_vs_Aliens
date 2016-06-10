@@ -28,12 +28,6 @@ class Entity(Base_Entity):
         self.y_vel = 0
         self.direction = 'L'
 
-        self.width = 20
-        self.height = 60
-        self.image = pygame.Surface([self.width, self.height])
-        self.image.fill(constants.RED)
-        self.rect = self.image.get_rect()
-
         self.level = None
 
     def update(self):
@@ -110,11 +104,71 @@ class Zombie(Entity):
         self.player = player
         self.health = 3
 
+        # Frames of animated walking left/right
+        self.walking_frames_l = []
+        self.walking_frames_r = []
+
+        sprite_sheet = SpriteSheet("Resources/Sprites/p1_walk.png")
+        # Load all the right facing images into a list
+        image = sprite_sheet.get_image(0, 0, 66, 90)
+        self.walking_frames_r.append(image)
+        image = sprite_sheet.get_image(66, 0, 66, 90)
+        self.walking_frames_r.append(image)
+        image = sprite_sheet.get_image(132, 0, 67, 90)
+        self.walking_frames_r.append(image)
+        image = sprite_sheet.get_image(0, 93, 66, 90)
+        self.walking_frames_r.append(image)
+        image = sprite_sheet.get_image(66, 93, 66, 90)
+        self.walking_frames_r.append(image)
+        image = sprite_sheet.get_image(132, 93, 72, 90)
+        self.walking_frames_r.append(image)
+        image = sprite_sheet.get_image(0, 186, 70, 90)
+        self.walking_frames_r.append(image)
+
+         # Load all the right facing images, then flip them
+        # to face left.
+        image = sprite_sheet.get_image(0, 0, 66, 90)
+        image = pygame.transform.flip(image, True, False)
+        self.walking_frames_l.append(image)
+        image = sprite_sheet.get_image(66, 0, 66, 90)
+        image = pygame.transform.flip(image, True, False)
+        self.walking_frames_l.append(image)
+        image = sprite_sheet.get_image(132, 0, 67, 90)
+        image = pygame.transform.flip(image, True, False)
+        self.walking_frames_l.append(image)
+        image = sprite_sheet.get_image(0, 93, 66, 90)
+        image = pygame.transform.flip(image, True, False)
+        self.walking_frames_l.append(image)
+        image = sprite_sheet.get_image(66, 93, 66, 90)
+        image = pygame.transform.flip(image, True, False)
+        self.walking_frames_l.append(image)
+        image = sprite_sheet.get_image(132, 93, 72, 90)
+        image = pygame.transform.flip(image, True, False)
+        self.walking_frames_l.append(image)
+        image = sprite_sheet.get_image(0, 186, 70, 90)
+        image = pygame.transform.flip(image, True, False)
+        self.walking_frames_l.append(image)
+ 
+        # Set the image the player starts with
+        self.image = self.walking_frames_r[0]
+ 
+        # Set a reference to the image rect.
+        self.rect = self.image.get_rect()
+
     def update(self):
         """
         'Brains' for the zombies go here
         """
         Entity.update(self)
+
+        # Do walking animation
+        pos = self.player.rect.x + self.level.world_shift
+        if self.direction == "R":
+            frame = (pos // 30) % len(self.walking_frames_r)
+            self.image = self.walking_frames_r[frame]
+        else:
+            frame = (pos // 30) % len(self.walking_frames_l)
+            self.image = self.walking_frames_l[frame]
 
         # Die
         if self.health <= 0:
@@ -122,10 +176,12 @@ class Zombie(Entity):
             self.level.score += 5
 
         # Head towards player
-        if self.rect.x <= self.player.rect.x:
+        if self.rect.x <= self.player.rect.centerx:
             self.go_right()
+            self.direction = 'R'
         else:
             self.go_left()
+            self.direction = 'L'
 
         # Jump if colliding with an object (REWRITE THIS IN FEWER LINES)
         # move to the right a bit and check collisions then back
@@ -212,7 +268,9 @@ class Player(Entity):
         # health
         if self.health <= 0:
             self.health = 0
-            self.kill()
+            self.alive = False
+            self.level.messages.message("You died! Press Escape to exit.", 2000)
+            self.level.player_list.empty()
 
         # collide with zombies
         enemy_hit_list = pygame.sprite.spritecollide(self, self.level.enemy_list, False)

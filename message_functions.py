@@ -20,9 +20,9 @@ class Messages(object):
 		self.message_y = 150
 		self.text_space = 20 # space between messages
 
-	def message(self, message):
+	def message(self, message, length = 300):
 		""" Add message to front of the stack. """
-		self.message_stack.append([message, 300])
+		self.message_stack.append([message, length])
 
 	def update(self):
 		""" update all messages """

@@ -51,48 +51,50 @@ def main():
                 constants.terminate()
  
             if event.type == pygame.KEYDOWN:
+                if player.alive:
+                    # Movement/Actions
+                    if event.key == pygame.K_LEFT:
+                        player.go_left()
+                    if event.key == pygame.K_RIGHT:
+                        player.go_right()
+                    if event.key == pygame.K_SPACE:
+                        player.jump() 
+                    if event.key == pygame.K_z:
+                        player.current_weapon.use_weapon()
+                    if event.key == pygame.K_r:
+                        player.current_weapon.reload()
+                    if event.key == pygame.K_x:
+                        player.throw_grenade()
 
-                # Movement/Actions
-                if event.key == pygame.K_LEFT:
-                    player.go_left()
-                if event.key == pygame.K_RIGHT:
-                    player.go_right()
-                if event.key == pygame.K_SPACE:
-                    player.jump() 
-                if event.key == pygame.K_z:
-                    player.current_weapon.use_weapon()
-                if event.key == pygame.K_r:
-                    player.current_weapon.reload()
-                if event.key == pygame.K_x:
-                    player.throw_grenade()
-                    current_level.messages.message("YO DUDE!")
-
-                # Change Weapon
-                if event.key == pygame.K_1:
-                    player.current_weapon = shotgun
-                    current_level.player_list.add(shotgun)
-                    current_level.player_list.remove(pistol)
-                    current_level.player_list.remove(machete)
-                if event.key == pygame.K_2:
-                    player.current_weapon = pistol
-                    current_level.player_list.add(pistol)
-                    current_level.player_list.remove(machete)
-                    current_level.player_list.remove(shotgun)
-                if event.key == pygame.K_3:
-                    player.current_weapon = machete
-                    current_level.player_list.add(machete)
-                    current_level.player_list.remove(pistol)
-                    current_level.player_list.remove(shotgun)         
+                    # Change Weapon
+                    if event.key == pygame.K_1:
+                        player.current_weapon = shotgun
+                        current_level.player_list.add(shotgun)
+                        current_level.player_list.remove(pistol)
+                        current_level.player_list.remove(machete)
+                    if event.key == pygame.K_2:
+                        player.current_weapon = pistol
+                        current_level.player_list.add(pistol)
+                        current_level.player_list.remove(machete)
+                        current_level.player_list.remove(shotgun)
+                    if event.key == pygame.K_3:
+                        player.current_weapon = machete
+                        current_level.player_list.add(machete)
+                        current_level.player_list.remove(pistol)
+                        current_level.player_list.remove(shotgun)         
 
                 # Quit Game
                 if event.key == pygame.K_ESCAPE:
                     constants.terminate()
+
+
  
             if event.type == pygame.KEYUP:
-                if event.key == pygame.K_LEFT and player.x_vel < 0:
-                    player.stop()
-                if event.key == pygame.K_RIGHT and player.x_vel > 0:
-                    player.stop()
+                if player.alive:
+                    if event.key == pygame.K_LEFT and player.x_vel < 0:
+                        player.stop()
+                    if event.key == pygame.K_RIGHT and player.x_vel > 0:
+                        player.stop()
 
         #update level
         current_level.update()
