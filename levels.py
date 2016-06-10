@@ -4,6 +4,8 @@ import blocks
 import entities
 import random
 
+from message_functions import Messages
+
 class Level:
     """ Generic superclass used to define a level. Child classes have specific level info."""
     def __init__(self, player):
@@ -36,6 +38,9 @@ class Level:
         # Font
         self.font = pygame.font.SysFont(None, 36)
 
+        # Initialise Messages
+        self.messages = Messages()
+
     def update(self):
         self.block_list.update()
         self.enemy_list.update()
@@ -44,6 +49,8 @@ class Level:
 
         self.spawn_zombies()
         self.spawn_pickups()
+
+        self.messages.update()
 
         # Increment score as long as player is alive
         if self.player.alive == True:
@@ -59,11 +66,13 @@ class Level:
         self.enemy_list.draw(surface)
         self.entity_list.draw(surface)
         self.player_list.draw(surface)
+        self.messages.draw(surface)
 
         # Draw UI
         self.draw_healthbar(surface,self.player.health)
         self.draw_score(surface, self.score)
         self.draw_ammo(surface)
+
 
 
     def shift_world(self, shift_x):
