@@ -8,21 +8,34 @@ class Messages(object):
 	messages get pushed downwards if another message is called
 	"""
 
-	def __init__(self):
+	def __init__(self, font):
 		""" Constructor. Initialise variables"""
+		self.font = font
 		self.message_time = 0
 		self.fade_time = 0
 		self.message_len = 100 # how long a message stays on the screen for
 		self.message_stack = []
 
-	def display_message(self, message):
+		self.message_x = constants.HALF_SCREEN_WIDTH
+		self.message_y = 150
+		self.text_space = 20 # space between messages
+
+	def message(self, message):
 		""" Add message to front of the stack. """
-		pass
+		self.message_stack.append([message, 300])
 
 	def update(self):
 		""" update all messages """
-		pass
+		for _i_num, _i in enumerate(self.message_stack):
+			if _i[1] > 0:
+				_i[1] +=- 1
+			else:
+				del self.message_stack[_i_num]
 
 	def draw(self, surface):
 		""" draw messages to surface """
-		pass
+		for text_num, text in enumerate(self.message_stack[::-1]):
+			message_text = self.font.render(text[0], 1, constants.WHITE)
+			message_rect = message_text.get_rect()
+			message_rect.center = (self.message_x, self.message_y+text_num*self.text_space)
+			surface.blit(message_text, message_rect)

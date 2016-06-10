@@ -10,6 +10,7 @@ def main():
     pygame.mixer.pre_init(44100, -16, 1, 512)   
     pygame.init()  
     pygame.mixer.init()
+    pygame.mixer.set_num_channels(16) # allow 16 sounds to be played at once
 
     screen_size = (constants.SCREEN_WIDTH,constants.SCREEN_HEIGHT)
     screen = pygame.display.set_mode(screen_size, )#pygame.FULLSCREEN)
@@ -64,6 +65,7 @@ def main():
                     player.current_weapon.reload()
                 if event.key == pygame.K_x:
                     player.throw_grenade()
+                    current_level.messages.message("YO DUDE!")
 
                 # Change Weapon
                 if event.key == pygame.K_1:

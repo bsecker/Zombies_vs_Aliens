@@ -3,6 +3,7 @@ import constants
 import blocks
 import entities
 import random
+import time
 
 from message_functions import Messages
 
@@ -28,9 +29,11 @@ class Level:
         self.zombie_chance = 150
 
         # Pickup
-        self.pickup_spawn_time = 0
-        self.pickup_spawn_min = 1000
+        self.pickup_spawn_time = time.time()
+        self.pickup_spawn_min = time.time() + 1
+        self._next_spawn = 10
         self.pickup_spawn_loc = None
+        self.last_pickup = 0
 
         # Score
         self.score = 0
@@ -39,7 +42,7 @@ class Level:
         self.font = pygame.font.SysFont(None, 36)
 
         # Initialise Messages
-        self.messages = Messages()
+        self.messages = Messages(self.font)
 
     def update(self):
         self.block_list.update()
@@ -104,25 +107,30 @@ class Level:
         """Handles waves and zombie spawning"""
         if random.randrange(0,int(self.zombie_chance)) == 1:
             self.zombie = self.add_zombie(random.choice([self.spawn1, self.spawn2]), 0) # Spawn at top of screen (zombies don't feel fall damage))
-            if self.zombie_chance > 5:
-                self.zombie_chance +=- 0.5
+            if self.zombie_chance > 20:
+                self.zombie_chance +=- 0.25
 
     def spawn_pickups(self):
-        """handles ammo and healthpack drops. They drop from the sky, like in Worms"""
-        self.pickup_spawn_time += 1
+        """handles ammo and healthpack drops. They drop from the sky at a specific point."""
 
-        if self.pickup_spawn_time >= self.pickup_spawn_min:
-            # Spawn a pickup
-            print('Pack dropped!')
-            pickup = random.choice([entities.Ammopack(self.player),entities.Healthpack(self.player)])
-            pickup.rect.x = self.pickup_spawn_loc
+        if time.time() >= self.pickup_spawn_min:
+            
+            # alternate between health and ammo
+            if self.last_pickup == 1:
+                pickup = entities.Ammopack(self.player)
+            else:
+                pickup = entities.Healthpack(self.player)
+
+            #place healthpack in middle of tile
+            pickup.rect.centerx = self.pickup_spawn_loc+random.randint(-45,45)
             pickup.rect.y = 0
             self.entity_list.add(pickup)
 
-            #reset time and make longer as time goes on
-            self.pickup_spawn_time = 0
-            self.pickup_spawn_min += random.randrange(150, 200)
-            print("new spawn time:{0}".format(str(self.pickup_spawn_min)))
+            #reset and make longer as time goes on
+            self._next_spawn += random.randrange(1, 5)
+            self.pickup_spawn_min += self._next_spawn
+            self.last_pickup = not self.last_pickup
+            self.messages.message("{0} dropped! Next drop in {1} seconds".format(str(pickup.entity_id),str(self._next_spawn)))
 
 
     def draw_healthbar(self, surface, health):

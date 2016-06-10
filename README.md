@@ -2,14 +2,12 @@
 DTG 300 Zombie Survival Game
 
 To do:
- - limit amount of zombies in world
  - sprites
  - backgrounds, art, misc stuff
  - optimise code
- - world gen - add side blocks
- - 'ammo drop coming in 3...2...1'
  - main menu
  - story??
+ - balancing
 
 
 

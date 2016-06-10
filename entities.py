@@ -341,6 +341,7 @@ class Machete(Weapon):
             enemy_hit_list = pygame.sprite.spritecollide(self, self.level.enemy_list, False)
             if len(enemy_hit_list) > 0:
                 enemy_hit_list[0].kill()
+                self.level.score += 5
                 self.hit_sound.play()
 
 
@@ -398,7 +399,7 @@ class Pistol(Weapon):
                     self.state = 'firing'
                     self.ammo_amount +=- self.clip_size
 
-        # Do parent stuff 
+        # Execute parent code
         Weapon.update(self)
 
     def reload(self):
