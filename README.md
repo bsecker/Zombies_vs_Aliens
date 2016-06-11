@@ -10,7 +10,7 @@ To do:
  - balancing
  - high score
  - player death
- - high score message, warning: incoming zombie horde message
+ - high score message
 
 
 Bugs

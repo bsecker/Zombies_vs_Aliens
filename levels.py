@@ -30,7 +30,7 @@ class Level:
 
         # Pickup
         self.pickup_spawn_time = time.time()
-        self.pickup_spawn_min = time.time() + 1
+        self.pickup_spawn_min = time.time() + 15
         self._next_spawn = 10
         self.pickup_spawn_loc = None
         self.last_pickup = 0
@@ -44,6 +44,7 @@ class Level:
 
         # Initialise Messages
         self.messages = Messages(self.font)
+        self.messages.message("Warning! Incoming Zombie Horde!")
 
     def update(self):
         self.block_list.update()
@@ -63,7 +64,7 @@ class Level:
     def render(self, surface):
         """draw the background and all the entities"""
 
-        surface.blit(self.background, (0,0))#(self.world_shift // 3,0))
+        surface.blit(self.background, (self.world_shift // 3-400,0))
         
         # Draw all sprite lists
         self.block_list.draw(surface)
@@ -172,11 +173,11 @@ class Level_01(Level):
         self.spawn1 = -2000
         self.spawn2 = 2000
 
-        #self.background = pygame.image.load("background_01.png").convert()
-        #self.background.set_colorkey(constants.WHITE)
+        self.background = pygame.image.load("Resources/Backgrounds/background_forest_3.jpg").convert()
+        self.background.set_colorkey(constants.WHITE)
         #draw background
-        self.background = pygame.surface.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT)).convert()
-        self.background.fill(constants.BG_COLOUR)
+        #self.background = pygame.surface.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT)).convert()
+        #self.background.fill(constants.BG_COLOUR)
 
         # Array with width, height, x, and y of blocks
         # level = [ [blocks.GRASS_LEFT, 500, 500],
