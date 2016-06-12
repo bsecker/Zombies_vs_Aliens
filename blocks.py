@@ -15,9 +15,11 @@ from spritesheet_functions import SpriteSheet
 
 GRASS_MIDDLE          = (0, 0, 70, 70)
 DIRT_MIDDLE           = (70, 0, 70, 70)
-SPAWN_BLOCK           = (70, 0, 70, 70)
+SPAWN_BLOCK           = (70, 70, 70, 70)
 BUSH_1                = (0, 70, 70, 70)
-BUSH_2                = (210, 0, 70, 70)
+BUSH_2                = (140, 0, 70, 70)
+FLAG                  = (140, 70, 70, 70)
+
 
 
 class Block(pygame.sprite.Sprite):
@@ -46,3 +48,9 @@ class PickupSpawnerBlock(Block):
 class Bush(Block):
     def __init__(self):
         Block.__init__(self, random.choice([BUSH_1, BUSH_2]))
+        self.entity_id = 'bush'
+
+class Flag(Block):
+    def __init__(self):
+        Block.__init__(self, FLAG)
+        self.entity_id = 'flag' # because we don't want to collide with flags, we add it to the entity list

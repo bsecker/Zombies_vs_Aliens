@@ -33,7 +33,7 @@ def main():
     player.rect.x = constants.SCREEN_WIDTH/2
     player.rect.y = constants.SCREEN_HEIGHT - player.rect.height*2
     player.level = current_level
-
+ 
     pistol = entities.Pistol(player)
     shotgun = entities.Shotgun(player)
     machete = entities.Machete(player)
@@ -63,7 +63,7 @@ def main():
                         player.current_weapon.use_weapon()
                     if event.key == pygame.K_r:
                         player.current_weapon.reload()
-                    if event.key == pygame.K_x:
+                    if event. key == pygame.K_x:
                         player.throw_grenade()
 
                     # Change Weapon

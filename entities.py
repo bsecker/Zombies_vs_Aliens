@@ -208,7 +208,6 @@ class Zombie(Entity):
             #play quiter the further they are away
             distance = abs(self.rect.centerx - self.player.rect.centerx)
             volume = abs(constants.translate(distance, 0, 3000, 1, 0))
-            print 'volume:', volume, ' distance: ',distance 
             self.moan_sounds[sound].set_volume(volume)
 
             self.moan_sounds[sound].play()
@@ -356,7 +355,8 @@ class Weapon(Base_Entity):
         self.fire_sound = None
 
     def update(self):
-        self.rect.center = self.player.rect.center
+        self.rect.centerx = self.player.rect.centerx
+        self.rect.centery = self.player.rect.centery + 20
         self.direction = self.player.direction
 
         if self.direction == 'R':
@@ -554,7 +554,7 @@ class Shotgun(Weapon):
         for _i in range(3):
             bullet = Bullet(self.direction)
             bullet.rect.x = self.rect.x+(self.rect.width/2)
-            bullet.rect.y = self.rect.y+(self.rect.height/2)+(10*_i)
+            bullet.rect.y = self.rect.y+(self.rect.height/2-5)+(8*_i)
             bullet.level = self.level
             self.level.entity_list.add(bullet)
 

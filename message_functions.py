@@ -35,7 +35,7 @@ class Messages(object):
 	def draw(self, surface):
 		""" draw messages to surface """
 		for text_num, text in enumerate(self.message_stack[::-1]):
-			message_text = self.font.render(text[0], 1, constants.WHITE)
+			message_text = self.font.render(text[0], 1, constants.YELLOW)
 			message_rect = message_text.get_rect()
 			message_rect.center = (self.message_x, self.message_y+text_num*self.text_space)
 			surface.blit(message_text, message_rect)

@@ -40,7 +40,7 @@ class Level:
         self.score_file = open("data.dat", 'w+')
 
         # Font
-        self.font = pygame.font.SysFont(None, 36)
+        self.font = pygame.font.SysFont(None, 42)
 
         # Initialise Messages
         self.messages = Messages(self.font)
@@ -156,10 +156,13 @@ class Level:
 
     def draw_ammo(self, surface):
         """draw player ammo"""
-        clip_text = self.font.render("{0}/{1}".format(str(self.player.current_weapon.clip_ammo),str(self.player.current_weapon.ammo_amount)), 1, constants.WHITE)
+        clip_text = self.font.render("{0}/{1}".format(str(self.player.current_weapon.clip_ammo),
+                                    str(self.player.current_weapon.ammo_amount)), 
+                                    1, 
+                                    constants.YELLOW)
         surface.blit(clip_text, (constants.SCREEN_WIDTH-75, 50))   
 
-        grenades_text = self.font.render(str(self.player.grenades), 1, constants.WHITE)
+        grenades_text = self.font.render(str(self.player.grenades), 1, constants.YELLOW)
         surface.blit(grenades_text, (constants.SCREEN_WIDTH-75, 70))      
 
 class Level_01(Level):
@@ -201,18 +204,27 @@ class Level_01(Level):
         ### Go through the array above and add blocks:
         ### TO DO: REDO THIS FOR MISC ITEMS (TREES ETC)
 
-
         for _block in level:
             # If block is a spawnblock
             if _block[0] == blocks.SPAWN_BLOCK:
+                # add spawn block
                 block = blocks.PickupSpawnerBlock()
                 self.pickup_spawn_loc = _block[1] 
+                self.block_list.add(block)
+
+            elif _block[0] == blocks.FLAG:
+                # Add flag
+                block = blocks.Flag()
+                self.entity_list.add(block)
+            elif _block[0] == blocks.BUSH_1:
+                block = blocks.Bush()
+                self.entity_list.add(block)
             else:
                 block = blocks.Block(_block[0])
+                self.block_list.add(block)
 
             block.rect.x = _block[1]
             block.rect.y = _block[2]
-            self.block_list.add(block)
 
     def generate_random_level(self, size):
         """
@@ -243,9 +255,14 @@ class Level_01(Level):
             elif _y <= constants.SCREEN_HEIGHT-_bs:
                 level.append([blocks.DIRT_MIDDLE, _x, _y+(_bs*2)])
 
+            # Add grass on top
+            if random.randrange(0,10) == 1:
+                level.append([blocks.BUSH_1, _x, _y - _bs])
+
             # Add ammo drop point at x=700
             if _x == 700:
                 level.append([blocks.SPAWN_BLOCK, _x, _y]) 
+                level.append([blocks.FLAG, _x, _y - _bs])
 
             _x+= _bs 
 
