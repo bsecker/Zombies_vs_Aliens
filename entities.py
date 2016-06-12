@@ -139,6 +139,17 @@ class Zombie(Entity):
         # Set a reference to the image rect.
         self.rect = self.image.get_rect()
 
+        # Zombie sounds
+        self.moan_sounds = [
+            pygame.mixer.Sound("Resources/Sounds/Zombie/sound_zombie_1.wav"),
+            pygame.mixer.Sound("Resources/Sounds/Zombie/sound_zombie_2.wav"),
+            pygame.mixer.Sound("Resources/Sounds/Zombie/sound_zombie_3.wav"),
+            pygame.mixer.Sound("Resources/Sounds/Zombie/sound_zombie_4.wav"),
+            pygame.mixer.Sound("Resources/Sounds/Zombie/sound_zombie_5.wav"),
+            pygame.mixer.Sound("Resources/Sounds/Zombie/sound_zombie_6.wav"),
+            pygame.mixer.Sound("Resources/Sounds/Zombie/sound_zombie_7.wav"),
+            ]
+
     def update(self):
         """
         'Brains' for the zombies go here
@@ -183,12 +194,25 @@ class Zombie(Entity):
         if len(block_hit_list) > 0:
             self.jump()
 
-        #check left
+        # Check left
         self.rect.x +=- 5        
         block_hit_list = pygame.sprite.spritecollide(self, self.level.block_list, False)
         self.rect.x += 5
         if len(block_hit_list) > 0:
             self.jump()
+
+        # Randomly play a sound
+        if random.randint(0, 350) == 1:
+            sound = random.randint(0,len(self.moan_sounds)-1)
+            
+            #play quiter the further they are away
+            distance = abs(self.rect.centerx - self.player.rect.centerx)
+            volume = abs(constants.translate(distance, 0, 3000, 1, 0))
+            print 'volume:', volume, ' distance: ',distance 
+            self.moan_sounds[sound].set_volume(volume)
+
+            self.moan_sounds[sound].play()
+
 
 class Player(Entity):
     def __init__(self):
@@ -393,7 +417,6 @@ class Machete(Weapon):
                 enemy_hit_list[0].kill()
                 self.level.score += 5
                 self.hit_sound.play()
-
 
     def rot_center(self, image, angle):
         """rotate an image while keeping its center and size"""
@@ -642,6 +665,7 @@ class Grenade(Entity):
         # hit enemies
         enemy_hit_list  = pygame.sprite.spritecollide(self, self.level.enemy_list, False)
         for enemy in enemy_hit_list:
+            self.level.score += 5
             enemy.kill()
 
         # hit player
@@ -649,6 +673,27 @@ class Grenade(Entity):
         if self.level.player in player_hit_list:
             self.level.player.health +=- 50
 
+        # Create explosion
+        sprite_sheet = SpriteSheet("Resources/Sprites/spritesheet_explosion.png")
+        self.explosion_images = [
+            sprite_sheet.get_image(0,0,128,128),
+            sprite_sheet.get_image(384,0,128,128),
+            sprite_sheet.get_image(640,0,128,128),
+            sprite_sheet.get_image(256,128,128,128),
+            sprite_sheet.get_image(512,128,128,128),
+            sprite_sheet.get_image(0,384,128,128),
+            sprite_sheet.get_image(384,384,128,128),
+            sprite_sheet.get_image(640,384,128,128),
+            sprite_sheet.get_image(256,512,128,128),
+            sprite_sheet.get_image(512,512,128,128),
+            sprite_sheet.get_image(0,640,128,128),
+            sprite_sheet.get_image(284,640,128,128),
+            sprite_sheet.get_image(640,640,128,128),
+            ]
+
+        self.rect.centery+=-30
+        explosion = Particle(self.explosion_images, self.rect.center)
+        self.level.entity_list.add(explosion)
 
 class Ammopack(Base_Entity):
     """ Pickup - entity that drops from the sky and gives the player ammo."""
@@ -684,3 +729,26 @@ class Healthpack(Ammopack):
         self.entity_id = 'healthpack'
         self.image = pygame.image.load("Resources/Sprites/sprite_healthpack.png").convert_alpha()
         self.rect = self.image.get_rect()
+
+
+class Particle(Base_Entity):
+    """ an object that cycles through its spritesheet input, and then destroys itself. 
+    used for graphic effects such as explosions, and zombie/player deaths.
+    images: list of spritesheet images input
+    rect: co-ordinates for center of sprite."""
+    def __init__(self, images, rect):
+        Base_Entity.__init__(self)
+        self.images = images
+        self.entity_id = 'particle'
+        self.step = 0
+        self.image = self.images[0]
+        self.rect = self.image.get_rect()
+        self.rect.center = rect
+
+    def update(self):
+        self.step += 0.5
+
+        if self.step < len(self.images):
+            self.image = self.images[int(self.step)]
+        else:
+            self.kill()

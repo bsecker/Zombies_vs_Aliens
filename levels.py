@@ -46,6 +46,8 @@ class Level:
         self.messages = Messages(self.font)
         self.messages.message("Warning! Incoming Zombie Horde!")
 
+        # self.add_zombie(0,0)
+
     def update(self):
         self.block_list.update()
         self.enemy_list.update()
@@ -173,7 +175,7 @@ class Level_01(Level):
         self.spawn1 = -2000
         self.spawn2 = 2000
 
-        self.background = pygame.image.load("Resources/Backgrounds/background_forest_3.jpg").convert()
+        self.background = pygame.image.load("Resources/Backgrounds/background_forest_4.png").convert()
         self.background.set_colorkey(constants.WHITE)
         #draw background
         #self.background = pygame.surface.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT)).convert()

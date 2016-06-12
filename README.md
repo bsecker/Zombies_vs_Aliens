@@ -6,11 +6,10 @@ To do:
  - backgrounds, art, misc stuff
  - optimise code
  - main menu
- - story??
- - balancing
  - high score
  - player death
  - high score message
+ 
 
 
 Bugs

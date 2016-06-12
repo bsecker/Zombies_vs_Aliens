@@ -42,7 +42,7 @@ def main():
     current_level.player_list. add(shotgun)
 
     FPSCLOCK = pygame.time.Clock()
-
+        
 
     while True:
         # Event Handling
