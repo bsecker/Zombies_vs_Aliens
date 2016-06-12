@@ -42,9 +42,10 @@ def main():
     current_level.player_list. add(shotgun)
 
     FPSCLOCK = pygame.time.Clock()
+    game_running = True
         
 
-    while True:
+    while game_running == True:
         # Event Handling
         for event in pygame.event.get():
             if event.type == pygame.QUIT: 
@@ -85,7 +86,7 @@ def main():
 
                 # Quit Game
                 if event.key == pygame.K_ESCAPE:
-                    constants.terminate()
+                    game_running = False
 
 
  
@@ -127,6 +128,10 @@ def main():
         FPSCLOCK.tick(constants.FPS)
 
         pygame.display.update()
+
+    # Write score if quit
+    current_level.write_score()
+    constants.terminate()
 
 if __name__ == '__main__':
     main()

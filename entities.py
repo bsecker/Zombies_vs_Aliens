@@ -286,7 +286,7 @@ class Player(Entity):
             self.alive = False
             self.level.messages.message("You died! Press Escape to exit.", 2000)
             self.level.player_list.empty()
-
+            
         # collide with zombies
         enemy_hit_list = pygame.sprite.spritecollide(self, self.level.enemy_list, False)
         if len(enemy_hit_list) > 0:
@@ -303,7 +303,7 @@ class Player(Entity):
                 #add ammo to all guns
                 self.get_ammo_pack()
 
-            elif entity_hit_list[0].entity_id == 'healthpack':
+            if entity_hit_list[0].entity_id == 'healthpack':
                 entity_hit_list[0].kill()
                 self.level.score += 15
                 self.ammo_pickup_sound.play()

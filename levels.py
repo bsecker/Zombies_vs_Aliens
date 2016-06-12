@@ -37,7 +37,11 @@ class Level:
 
         # Score
         self.score = 0
-        self.score_file = open("data.dat", 'w+')
+        self.score_file = open("data.dat", 'r+')
+        self.high_score = int(self.score_file.read())
+        self.high_score_reached = False
+
+        print self.high_score
 
         # Font
         self.font = pygame.font.SysFont(None, 42)
@@ -63,6 +67,18 @@ class Level:
         if self.player.alive == True:
             self.score += 0.005
 
+        if self.high_score_reached == False:
+            if self.score > self.high_score:
+                self.messages.message("High Score Reached!")
+                self.high_score_reached = True
+        else:
+            self.high_score = self.score
+
+    def write_score(self):
+        if self.high_score_reached:
+            self.score_file.write(str(self.score))
+        self.score_file.close()
+
     def render(self, surface):
         """draw the background and all the entities"""
 
@@ -79,8 +95,6 @@ class Level:
         self.draw_healthbar(surface,self.player.health)
         self.draw_score(surface, self.score)
         self.draw_ammo(surface)
-
-
 
     def shift_world(self, shift_x):
         """ When the user moves left/right scroll everything:"""
@@ -256,7 +270,7 @@ class Level_01(Level):
                 level.append([blocks.DIRT_MIDDLE, _x, _y+(_bs*2)])
 
             # Add grass on top
-            if random.randrange(0,10) == 1:
+            if random.randrange(0,6) == 1:
                 level.append([blocks.BUSH_1, _x, _y - _bs])
 
             # Add ammo drop point at x=700
