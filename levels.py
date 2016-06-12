@@ -175,8 +175,8 @@ class Level_01(Level):
         self.spawn1 = -2000
         self.spawn2 = 2000
 
-        self.background = pygame.image.load("Resources/Backgrounds/background_forest_4.png").convert()
-        self.background.set_colorkey(constants.WHITE)
+        self.background = pygame.image.load("Resources/Backgrounds/background_forest_6.png").convert()
+        self.background.set_colorkey(constants.RED)
         #draw background
         #self.background = pygame.surface.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT)).convert()
         #self.background.fill(constants.BG_COLOUR)
@@ -201,21 +201,15 @@ class Level_01(Level):
         ### Go through the array above and add blocks:
         ### TO DO: REDO THIS FOR MISC ITEMS (TREES ETC)
 
-        # get list of grass blocks and choose two 
-        #_grass_list = [_i for _i in level if _i[0] == blocks.GRASS_MIDDLE]
-        #_sample = random.sample(_grass_list, 2)
 
         for _block in level:
-            # Change two grass blocks into spawn tiles for pickups
-            #if _block in _sample:
-            #    block = blocks.Block(blocks.STONE_PLATFORM_MIDDLE)
-            #else:
             # If block is a spawnblock
-            if _block[0] == blocks.STONE_PLATFORM_LEFT:
+            if _block[0] == blocks.SPAWN_BLOCK:
                 block = blocks.PickupSpawnerBlock()
                 self.pickup_spawn_loc = _block[1] 
             else:
                 block = blocks.Block(_block[0])
+
             block.rect.x = _block[1]
             block.rect.y = _block[2]
             self.block_list.add(block)
@@ -249,17 +243,14 @@ class Level_01(Level):
             elif _y <= constants.SCREEN_HEIGHT-_bs:
                 level.append([blocks.DIRT_MIDDLE, _x, _y+(_bs*2)])
 
-            # Add ammo drop point
+            # Add ammo drop point at x=700
             if _x == 700:
-                level.append([blocks.STONE_PLATFORM_LEFT, _x, _y]) 
+                level.append([blocks.SPAWN_BLOCK, _x, _y]) 
 
             _x+= _bs 
 
         # Add a block to the end that the zombies can jump on
         level.append([blocks.GRASS_MIDDLE, _x, constants.SCREEN_HEIGHT-_bs]) 
-
-        
-
 
         print 'creating {0} blocks..'.format(len(level))
         return level

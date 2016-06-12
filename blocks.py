@@ -2,6 +2,7 @@
 Module for managing platforms.
 """
 import pygame
+import random
  
 from spritesheet_functions import SpriteSheet
  
@@ -12,13 +13,11 @@ from spritesheet_functions import SpriteSheet
 #   Width of sprite
 #   Height of sprite
 
-GRASS_LEFT            = (576, 720, 70, 70)
-GRASS_RIGHT           = (576, 576, 70, 70)
 GRASS_MIDDLE          = (0, 0, 70, 70)
 DIRT_MIDDLE           = (70, 0, 70, 70)
-STONE_PLATFORM_LEFT   = (432, 720, 70, 40)
-STONE_PLATFORM_MIDDLE = (648, 648, 70, 40)
-STONE_PLATFORM_RIGHT  = (792, 648, 70, 40)
+SPAWN_BLOCK           = (70, 0, 70, 70)
+BUSH_1                = (0, 70, 70, 70)
+BUSH_2                = (210, 0, 70, 70)
 
 
 class Block(pygame.sprite.Sprite):
@@ -26,7 +25,7 @@ class Block(pygame.sprite.Sprite):
  
     def __init__(self, sprite_sheet_data):
         """ Block constructor. Assumes constructed with user passing in
-            an array of 5 numbers like what's defined at the top of this
+            an array of 4 numbers like what's defined at the top of this
             code. """
         pygame.sprite.Sprite.__init__(self)
  
@@ -42,4 +41,8 @@ class Block(pygame.sprite.Sprite):
 class PickupSpawnerBlock(Block):
     """ Block where pickups drop to"""
     def __init__(self):
-        Block.__init__(self, STONE_PLATFORM_MIDDLE)
+        Block.__init__(self, SPAWN_BLOCK)
+
+class Bush(Block):
+    def __init__(self):
+        Block.__init__(self, random.choice([BUSH_1, BUSH_2]))
