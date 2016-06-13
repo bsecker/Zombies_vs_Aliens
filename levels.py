@@ -37,8 +37,9 @@ class Level:
 
         # Score
         self.score = 0
-        self.score_file = open("data.dat", 'r+')
-        self.high_score = int(self.score_file.read())
+        score_file = open("data.dat", 'r')
+        self.high_score = int(score_file.read())
+        score_file.close()
         self.high_score_reached = False
 
         print self.high_score
@@ -76,13 +77,14 @@ class Level:
 
     def write_score(self):
         if self.high_score_reached:
-            self.score_file.write(str(self.score))
-        self.score_file.close()
+            score_file = open("data.dat",'w')
+            score_file.write(str(int(self.score)))
+            score_file.close()
 
     def render(self, surface):
         """draw the background and all the entities"""
 
-        surface.blit(self.background, (self.world_shift // 3-400,0))
+        surface.blit(self.background, (self.world_shift // 3-420,0))
         
         # Draw all sprite lists
         self.block_list.draw(surface)

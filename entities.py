@@ -286,7 +286,7 @@ class Player(Entity):
             self.alive = False
             self.level.messages.message("You died! Press Escape to exit.", 2000)
             self.level.player_list.empty()
-            
+
         # collide with zombies
         enemy_hit_list = pygame.sprite.spritecollide(self, self.level.enemy_list, False)
         if len(enemy_hit_list) > 0:
@@ -295,23 +295,25 @@ class Player(Entity):
         # collide with entities
         entity_hit_list = pygame.sprite.spritecollide(self, self.level.entity_list, False)
         if len(entity_hit_list) > 0:
-            if entity_hit_list[0].entity_id == 'ammopack':
-                entity_hit_list[0].kill()
-                self.level.score += 10
-                self.ammo_pickup_sound.play()
+            for entity in entity_hit_list:
+                if entity.entity_id == 'ammopack':
+                    entity.kill()
+                    self.level.score += 10
+                    self.ammo_pickup_sound.play()
 
-                #add ammo to all guns
-                self.get_ammo_pack()
+                    #add ammo to all guns
+                    self.get_ammo_pack()
 
-            if entity_hit_list[0].entity_id == 'healthpack':
-                entity_hit_list[0].kill()
-                self.level.score += 15
-                self.ammo_pickup_sound.play()
+                if entity.entity_id == 'healthpack':
+                    if self.health < 100:
+                        entity.kill()
+                        self.level.score += 15
+                        self.ammo_pickup_sound.play()
 
-                # Add score
-                self.health += 33
-                if self.health > 100: # limit to 100
-                    self.health = 100
+                        # Add score
+                        self.health += 33
+                        if self.health > 100: # limit to 100
+                            self.health = 100
 
         # Do walking animation
         pos = self.rect.x + self.level.world_shift
