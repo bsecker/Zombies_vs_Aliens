@@ -1,3 +1,7 @@
+"""
+Standalone module for testing main menu functionality. May or may not be implemented into the final game prototype.
+"""
+
 import pygame
  
 pygame.init()
