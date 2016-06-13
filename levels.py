@@ -45,7 +45,7 @@ class Level:
         print self.high_score
 
         # Font
-        self.font = pygame.font.SysFont(None, 42)
+        self.font = pygame.font.SysFont('kozgoproheavyopentype', 42)
 
         # Initialise Messages
         self.messages = Messages(self.font)
@@ -162,12 +162,12 @@ class Level:
 
     def draw_score(self, surface, score):
         """Render score"""
-        score_text = self.font.render(str(int(score)), 1, constants.YELLOW)
+        score_text = self.font.render(str(int(score)), 1, constants.TEXT_COLOUR)
         surface.blit(score_text, (constants.HALF_SCREEN_WIDTH, 50))
 
     def draw_fps(self, surface, fps):
         """Developer function to draw measure of current FPS of program."""
-        fps_text = self.font.render(str(int(fps.get_fps())), 1, constants.YELLOW)
+        fps_text = self.font.render(str(int(fps.get_fps())), 1, constants.TEXT_COLOUR)
         surface.blit(fps_text, (constants.SCREEN_WIDTH-70, 70))
 
     def draw_ammo(self, surface):
@@ -175,11 +175,11 @@ class Level:
         clip_text = self.font.render("{0}/{1}".format(str(self.player.current_weapon.clip_ammo),
                                     str(self.player.current_weapon.ammo_amount)), 
                                     1, 
-                                    constants.YELLOW)
-        surface.blit(clip_text, (constants.SCREEN_WIDTH-75, 50))   
+                                    constants.TEXT_COLOUR)
+        surface.blit(clip_text, (constants.SCREEN_WIDTH-100, 50))   
 
-        grenades_text = self.font.render(str(self.player.grenades), 1, constants.YELLOW)
-        surface.blit(grenades_text, (constants.SCREEN_WIDTH-75, 70))      
+        grenades_text = self.font.render(str(self.player.grenades), 1, constants.TEXT_COLOUR)
+        surface.blit(grenades_text, (constants.SCREEN_WIDTH-100, 90))      
 
 class Level_01(Level):
     """
