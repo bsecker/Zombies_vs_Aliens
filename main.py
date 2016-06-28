@@ -1,12 +1,16 @@
+"""
+Zombie Survival Game (Github: https://github.com/bsecker/dtg300_zombiegame)
+AS 91637 v2
+"""
 import pygame
 from pygame.locals import *
 import constants
 import levels
 import entities
 
-
-
 def main():
+
+    # Initialise Pygame
     pygame.mixer.pre_init(44100, -16, 1, 512)   
     pygame.init()  
     pygame.mixer.init()
@@ -87,8 +91,6 @@ def main():
                 # Quit Game
                 if event.key == pygame.K_ESCAPE:
                     game_running = False
-
-
  
             if event.type == pygame.KEYUP:
                 if player.alive:
@@ -117,16 +119,8 @@ def main():
                 current_level.shift_world(diff)    
         # Draw
         current_level.render(screen)
-        
-        # Draw rentagles around player
-        # pygame.draw.rect(screen, constants.GREEN, player.rect, 1)
-        # pygame.draw.rect(screen, constants.RED, player.current_weapon.rect, 1)
-
-
         #current_level.draw_fps(screen, FPSCLOCK)
-
         FPSCLOCK.tick(constants.FPS)
-
         pygame.display.update()
 
     # Write score if quit

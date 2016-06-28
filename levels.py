@@ -42,8 +42,6 @@ class Level:
         score_file.close()
         self.high_score_reached = False
 
-        print self.high_score
-
         # Font
         self.font = pygame.font.SysFont('kozgoproheavyopentype', 42)
 
@@ -51,9 +49,8 @@ class Level:
         self.messages = Messages(self.font)
         self.messages.message("Warning! Incoming Zombie Horde!")
 
-        # self.add_zombie(0,0)
-
     def update(self):
+        """Update entire world"""
         self.block_list.update()
         self.enemy_list.update()
         self.entity_list.update()
@@ -76,6 +73,7 @@ class Level:
             self.high_score = self.score
 
     def write_score(self):
+        """Update high score file if high score is reached"""
         if self.high_score_reached:
             score_file = open("data.dat",'w')
             score_file.write(str(int(self.score)))
@@ -124,7 +122,8 @@ class Level:
         return zombie
 
     def spawn_zombies(self):
-        """Handles waves and zombie spawning"""
+        """Handles waves and zombie spawning.
+        Zombies spawn progressively more frequently with time. """
         if random.randrange(0,int(self.zombie_chance)) == 1:
             self.zombie = self.add_zombie(random.choice([self.spawn1, self.spawn2]), 0) # Spawn at top of screen (zombies don't feel fall damage))
             if self.zombie_chance > 20:
@@ -244,8 +243,9 @@ class Level_01(Level):
 
     def generate_random_level(self, size):
         """
-        Currently just makes a bottom row, and randomly places blocks on a row above. 
-        looks terrible
+        This function generates a random level by starting at the leftmost side
+        and then going up or down one block as it goes along. It then adds blocks 
+        underneath and also adds grass.
         """
         _bs = 70 # Block size
         _x = -30*_bs
