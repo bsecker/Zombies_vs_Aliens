@@ -228,45 +228,23 @@ class Player(Entity):
         self.walking_frames_r = []
 
         sprite_sheet = SpriteSheet("Resources/Sprites/p1_walk.png")
-        # Load all the right facing images into a list
-        image = sprite_sheet.get_image(0, 0, 66, 90)
-        self.walking_frames_r.append(image)
-        image = sprite_sheet.get_image(66, 0, 66, 90)
-        self.walking_frames_r.append(image)
-        image = sprite_sheet.get_image(132, 0, 67, 90)
-        self.walking_frames_r.append(image)
-        image = sprite_sheet.get_image(0, 93, 66, 90)
-        self.walking_frames_r.append(image)
-        image = sprite_sheet.get_image(66, 93, 66, 90)
-        self.walking_frames_r.append(image)
-        image = sprite_sheet.get_image(132, 93, 72, 90)
-        self.walking_frames_r.append(image)
-        image = sprite_sheet.get_image(0, 186, 70, 90)
-        self.walking_frames_r.append(image)
+        # Load all the images into a list
+        images = [
+            sprite_sheet.get_image(0, 0, 66, 90),
+            sprite_sheet.get_image(66, 0, 66, 90),
+            sprite_sheet.get_image(132, 0, 67, 90),
+            sprite_sheet.get_image(0, 93, 66, 90),
+            sprite_sheet.get_image(66, 93, 66, 90),
+            sprite_sheet.get_image(132, 93, 72, 90),
+            sprite_sheet.get_image(0, 186, 70, 90),
+        ]
 
-         # Load all the right facing images, then flip them
-        # to face left.
-        image = sprite_sheet.get_image(0, 0, 66, 90)
-        image = pygame.transform.flip(image, True, False)
-        self.walking_frames_l.append(image)
-        image = sprite_sheet.get_image(66, 0, 66, 90)
-        image = pygame.transform.flip(image, True, False)
-        self.walking_frames_l.append(image)
-        image = sprite_sheet.get_image(132, 0, 67, 90)
-        image = pygame.transform.flip(image, True, False)
-        self.walking_frames_l.append(image)
-        image = sprite_sheet.get_image(0, 93, 66, 90)
-        image = pygame.transform.flip(image, True, False)
-        self.walking_frames_l.append(image)
-        image = sprite_sheet.get_image(66, 93, 66, 90)
-        image = pygame.transform.flip(image, True, False)
-        self.walking_frames_l.append(image)
-        image = sprite_sheet.get_image(132, 93, 72, 90)
-        image = pygame.transform.flip(image, True, False)
-        self.walking_frames_l.append(image)
-        image = sprite_sheet.get_image(0, 186, 70, 90)
-        image = pygame.transform.flip(image, True, False)
-        self.walking_frames_l.append(image)
+        # add all right facing images, flip and then add left facing
+        for image in images:
+            self.walking_frames_r.append(image)
+            image = pygame.transform.flip(image, True, False)
+            self.walking_frames_l.append(image)
+
  
         # Set the image the player starts with
         self.image = self.walking_frames_r[0]
